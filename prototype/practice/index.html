@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#050711" />
+    <meta
+      name="description"
+      content="Bubble Royale virtual practice arena — learn the shot, build combos and climb your personal score."
+    />
+    <title>Practice Arena — Bubble Royale</title>
+    <link rel="stylesheet" href="practice.css" />
+  </head>
+  <body>
+    <div class="practice-shell">
+      <header class="practice-header">
+        <a class="practice-brand" href="../homepage/index-modular.html#top" aria-label="Return to Bubble Royale home">
+          <img src="../homepage/assets/bubble-royale-logo.png" alt="Bubble Royale" width="2008" height="783" />
+        </a>
+
+        <div class="practice-header-center" aria-label="Practice mode status">
+          <span class="practice-mode-pill">Virtual practice</span>
+          <span class="practice-status-pill" id="status-pill">Live session</span>
+        </div>
+
+        <a class="practice-back" href="../homepage/index-modular.html#tournaments">
+          Exit arena <span aria-hidden="true">↗</span>
+        </a>
+      </header>
+
+      <main class="practice-main">
+        <section class="practice-intro" aria-labelledby="practice-title">
+          <div>
+            <span class="practice-kicker">Skill lab / session 01</span>
+            <h1 id="practice-title">Find your<br /><span>perfect angle.</span></h1>
+          </div>
+          <p class="practice-intro-copy">
+            A risk-free virtual arena to learn the board, build combos and sharpen the precision that will power future tournaments.
+          </p>
+        </section>
+
+        <section class="practice-layout" aria-label="Bubble Royale practice game">
+          <article class="arena-card">
+            <div class="arena-toolbar">
+              <div class="arena-toolbar-label"><span aria-hidden="true"></span> Live practice board</div>
+              <div class="arena-seed">Seed <strong id="session-seed">BR-81031</strong></div>
+            </div>
+
+            <div class="canvas-wrap">
+              <canvas id="practice-canvas" width="760" height="760" aria-label="Bubble shooter practice board">
+                Your browser does not support the practice board canvas.
+              </canvas>
+            </div>
+
+            <div class="arena-hint"><strong>Aim with your pointer</strong> · click or tap to fire · match three or more bubbles to clear them</div>
+          </article>
+
+          <aside class="practice-side" aria-label="Practice session details">
+            <div class="practice-side-card score-card" aria-live="polite">
+              <div class="score-stat score-stat-wide">
+                <span class="score-label">Virtual score</span>
+                <strong class="score-value score-value-gold" id="score-value">0</strong>
+              </div>
+              <div class="score-stat">
+                <span class="score-label">Shots left</span>
+                <strong class="score-value score-value-cyan" id="shots-value">38</strong>
+              </div>
+              <div class="score-stat">
+                <span class="score-label">Best combo</span>
+                <strong class="score-value score-value-violet" id="combo-value">×0</strong>
+              </div>
+            </div>
+
+            <div class="practice-side-card">
+              <div class="side-heading">
+                <h2>Next bubble</h2>
+                <span id="current-status">Ready</span>
+              </div>
+              <div class="next-bubble-row">
+                <div class="next-bubble" aria-hidden="true"><span class="bubble-token" id="next-bubble"></span></div>
+                <div class="next-bubble-copy">
+                  <strong id="next-bubble-label">Loading shot</strong>
+                  <span>The next color is always visible. Plan the chain before you fire.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="practice-side-card">
+              <div class="side-heading">
+                <h2>Session objective</h2>
+                <span>Personal run</span>
+              </div>
+              <div class="objective">
+                <div class="objective-row"><span>Clear the board</span><strong id="objective-value">0%</strong></div>
+                <div class="meter" aria-hidden="true"><span id="shot-meter"></span></div>
+                <div class="objective-row"><span>Personal best</span><strong id="best-score">0</strong></div>
+              </div>
+            </div>
+
+            <div class="practice-side-card">
+              <div class="side-heading">
+                <h2>Controls</h2>
+                <span>Desktop / mobile</span>
+              </div>
+              <ul class="control-list">
+                <li><span>Aim</span><span class="key">Pointer</span></li>
+                <li><span>Fire</span><span class="key">Tap</span></li>
+                <li><span>Keyboard fire</span><span class="key">Space</span></li>
+              </ul>
+              <div class="practice-actions">
+                <button class="practice-button practice-button-primary" id="shoot-button" type="button">Fire shot</button>
+                <button class="practice-button practice-button-ghost" id="new-run" type="button">New run</button>
+              </div>
+            </div>
+          </aside>
+        </section>
+      </main>
+
+      <footer class="practice-footer">
+        <span><strong>Virtual mode only.</strong> No entry fee, cash wallet or cash settlement is connected to this practice session.</span>
+        <span>Skill-based play · Bubble Royale · 2026</span>
+      </footer>
+
+      <div class="game-toast" id="game-toast" role="status" aria-live="polite"></div>
+    </div>
+
+    <script src="engine.js"></script>
+    <script src="practice.js"></script>
+  </body>
+</html>

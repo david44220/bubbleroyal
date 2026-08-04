@@ -2,7 +2,7 @@
 
 ## Version
 
-`v0.1 — Homepage prototype and design source`
+`v0.2 — Homepage prototype and playable virtual practice arena`
 
 ## Completed
 
@@ -18,6 +18,11 @@
 - Responsive homepage assembled with CSS 2D/3D transforms and floating animations.
 - Mobile navigation, tournament countdown, reveal animations and CTA interactions added.
 - Standalone Android-compatible HTML version produced with embedded assets.
+- First playable virtual practice arena added under `prototype/practice/`.
+- Deterministic staggered-board engine added with match clusters, floating-bubble cascades, combo scoring and penalty rows.
+- Pointer, touch and keyboard controls added with responsive premium game shell.
+- Homepage modular preview now links to the practice arena.
+- Node test coverage added for determinism, matching, cascades, penalty rows and replay parity.
 
 ## Current limitations
 
@@ -25,7 +30,8 @@
 - Tournament values are visual/demo data only.
 - No authentication, wallet, payment, KYC or withdrawal flow is active.
 - No cash mode is enabled.
+- Practice scores are local-only and are not submitted to a server or leaderboard.
 
 ## Next milestone
 
-Build the first playable Bubble Shooter practice mode with deterministic client rules, local score calculation and a design-matched game screen. Then move score verification to the PHP backend before introducing any tournament economy.
+Move practice sessions to signed server validation with replay events and a deterministic score verifier. Keep the virtual-only boundary in place until the replay protocol, anti-cheat rules and security tests are complete.

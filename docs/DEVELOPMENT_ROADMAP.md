@@ -45,7 +45,7 @@ Recommended runtime stack: PHP 8.5, MySQL 8, Redis, S3/CDN, PWA service worker a
 ### V1 — Virtual Skill Arena
 
 - account and onboarding;
-- practice mode;
+- practice mode (implemented in `prototype/practice/`);
 - playable Bubble Shooter client;
 - deterministic scoring;
 - virtual tournaments;
@@ -93,8 +93,8 @@ Recommended runtime stack: PHP 8.5, MySQL 8, Redis, S3/CDN, PWA service worker a
 2. Repository conventions, CI, environment templates and PHP bootstrap.
 3. Design tokens, i18n, responsive shell and authenticated layout patterns.
 4. Authentication, sessions, profile and security center.
-5. Local Bubble Shooter game engine and practice screen.
-6. Deterministic board seeds, replay format and score model.
+5. Local Bubble Shooter game engine and practice screen (initial client implemented).
+6. Deterministic board seeds, replay format and score model (client seed and score model implemented; server verifier pending).
 7. Signed game sessions and server-side score verification.
 8. Practice challenges, XP, tickets and achievements.
 9. Tournament definitions, lobbies, entries and schedules.

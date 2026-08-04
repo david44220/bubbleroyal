@@ -4,12 +4,13 @@ Bubble Royale is a premium skill-based Bubble Shooter tournament platform with a
 
 ## Current status
 
-The repository currently contains the validated homepage prototype and its transparent 2D/3D visual assets under [`prototype/homepage/`](prototype/homepage/).
+The repository currently contains the validated homepage prototype, its transparent 2D/3D visual assets and the first playable virtual practice arena under [`prototype/`](prototype/).
 
 The homepage is available in two forms:
 
 - `index.html`: fully self-contained standalone preview. CSS, JavaScript and PNG assets are embedded so it works when opened directly from Android downloads.
 - `index-modular.html`: maintainable source version referencing `styles.css`, `app.js` and `assets/`.
+- `prototype/practice/index.html`: playable virtual practice mode with deterministic board rules and local score only.
 
 ## Product principles
 
@@ -24,4 +25,4 @@ The homepage is available in two forms:
 
 ## Roadmap
 
-The full staged roadmap is documented in [`docs/DEVELOPMENT_ROADMAP.md`](docs/DEVELOPMENT_ROADMAP.md). The next implementation target is the playable virtual-mode Bubble Shooter client, followed by server-validated sessions and virtual tournaments.
+The full staged roadmap is documented in [`docs/DEVELOPMENT_ROADMAP.md`](docs/DEVELOPMENT_ROADMAP.md). The next implementation target is signed server-validated sessions and replay verification before any tournament economy is introduced.

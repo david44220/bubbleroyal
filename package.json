@@ -1,0 +1,11 @@
+{
+  "name": "bubble-royale",
+  "private": true,
+  "version": "0.2.0",
+  "description": "Bubble Royale prototype and deterministic virtual practice client",
+  "scripts": {
+    "test": "node --test tests/practice-engine.test.mjs",
+    "check:homepage": "node --check prototype/homepage/app.js",
+    "check:practice": "node --check prototype/practice/engine.js && node --check prototype/practice/practice.js"
+  }
+}
