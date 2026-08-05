@@ -1,0 +1,43 @@
+name: Bubble Royale CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  javascript:
+    name: JavaScript deterministic checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run deterministic tests
+        run: npm test
+      - name: Check homepage and practice scripts
+        run: npm run check
+
+  php:
+    name: PHP 8.5 server checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: none
+      - name: Lint PHP sources
+        shell: bash
+        run: find app addons public tests -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Run PHP protocol tests
+        env:
+          BUBBLE_ROYALE_SESSION_SECRET: ci-only-secret-change-me-0123456789
+        run: php tests/php/run.php

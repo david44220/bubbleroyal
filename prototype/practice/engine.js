@@ -8,6 +8,7 @@
   const DEFAULT_INITIAL_ROWS = 6;
   const DEFAULT_SHOTS = 38;
   const MISS_LIMIT = 5;
+  const RULES_VERSION = 'br-practice-1';
 
   function normalizeSeed(seed) {
     const numericSeed = Number(seed) >>> 0;
@@ -324,6 +325,7 @@
     DEFAULT_ROWS,
     DEFAULT_COLS,
     MISS_LIMIT,
+    RULES_VERSION,
     addPenaltyRow,
     applyShot,
     boardCount,

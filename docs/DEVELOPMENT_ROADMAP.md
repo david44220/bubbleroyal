@@ -94,8 +94,8 @@ Recommended runtime stack: PHP 8.5, MySQL 8, Redis, S3/CDN, PWA service worker a
 3. Design tokens, i18n, responsive shell and authenticated layout patterns.
 4. Authentication, sessions, profile and security center.
 5. Local Bubble Shooter game engine and practice screen (initial client implemented).
-6. Deterministic board seeds, replay format and score model (client seed and score model implemented; server verifier pending).
-7. Signed game sessions and server-side score verification.
+6. Deterministic board seeds, replay format and score model (implemented with `br-replay-v1`).
+7. Signed game sessions and server-side score verification (implemented for virtual practice only).
 8. Practice challenges, XP, tickets and achievements.
 9. Tournament definitions, lobbies, entries and schedules.
 10. Leaderboards, tie-breaking, result publication and replay review.

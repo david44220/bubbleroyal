@@ -2,7 +2,8 @@
   'use strict';
 
   const Engine = window.BubbleRoyalePractice;
-  if (!Engine) return;
+  const Replay = window.BubbleRoyaleReplay;
+  if (!Engine || !Replay) return;
 
   const canvas = document.querySelector('#practice-canvas');
   const context = canvas.getContext('2d');
@@ -19,6 +20,7 @@
   const statusPill = document.querySelector('#status-pill');
   const shootButton = document.querySelector('#shoot-button');
   const newRunButton = document.querySelector('#new-run');
+  const exportReplayButton = document.querySelector('#export-replay');
   const toast = document.querySelector('#game-toast');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const bestScoreKey = 'bubble-royale.practice.best-score';
@@ -38,6 +40,7 @@
   let toastTimer = 0;
   let animationFrame = 0;
   let initialBubbleCount = 1;
+  let replay = null;
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
@@ -391,6 +394,7 @@
     runIndex += 1;
     state = Engine.createGame({ seed: Engine.DEFAULT_SEED + runIndex * 7919 });
     initialBubbleCount = Engine.boardCount(state.board);
+    replay = Replay.createReplay(state);
     movingShot = null;
     aimAngle = 0;
     sessionSeed.textContent = `BR-${state.seed}`;
@@ -401,8 +405,10 @@
   function finishShot() {
     const shot = movingShot;
     movingShot = null;
+    const before = state;
     const applied = Engine.applyShot(state, shot.placement.row, shot.placement.col);
     state = applied.game;
+    replay = Replay.appendShot(replay, before, state, shot.placement, applied.result);
     updatePanel();
 
     if (applied.result.outcome === 'match') {
@@ -412,6 +418,18 @@
     } else if (applied.result.penalty) {
       showToast('Five misses added a penalty row. Reset your angle and read the board.');
     }
+  }
+
+  function exportReplay() {
+    const document = Replay.finalize(replay, state);
+    const blob = new Blob([Replay.serialize(document)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = window.document.createElement('a');
+    link.href = url;
+    link.download = `bubble-royale-${state.seed}-replay.json`;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast('Replay exported. It can be verified by the future server session API.');
   }
 
   function animateShot(timestamp) {
@@ -465,6 +483,7 @@
   });
   shootButton.addEventListener('click', fireShot);
   newRunButton.addEventListener('click', startNewRun);
+  exportReplayButton.addEventListener('click', exportReplay);
 
   window.addEventListener('keydown', (event) => {
     if (event.key === 'ArrowLeft') {
@@ -484,6 +503,7 @@
   window.addEventListener('resize', resizeCanvas);
   state = Engine.createGame({ seed: Engine.DEFAULT_SEED });
   initialBubbleCount = Engine.boardCount(state.board);
+  replay = Replay.createReplay(state);
   resizeCanvas();
   updatePanel();
   render();

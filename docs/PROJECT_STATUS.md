@@ -2,7 +2,7 @@
 
 ## Version
 
-`v0.2 — Homepage prototype and playable virtual practice arena`
+`v0.3 — Deterministic replays and signed virtual session verification`
 
 ## Completed
 
@@ -23,6 +23,10 @@
 - Pointer, touch and keyboard controls added with responsive premium game shell.
 - Homepage modular preview now links to the practice arena.
 - Node test coverage added for determinism, matching, cascades, penalty rows and replay parity.
+- Deterministic `br-replay-v1` protocol added with local validation, tamper detection and replay export.
+- PHP 8.5 rules engine added with a cross-language deterministic seed vector.
+- HMAC-signed virtual practice sessions and server-side replay score verification added.
+- Framework-free front controller, `.env.example`, PHP protocol tests and GitHub Actions CI added.
 
 ## Current limitations
 
@@ -30,8 +34,9 @@
 - Tournament values are visual/demo data only.
 - No authentication, wallet, payment, KYC or withdrawal flow is active.
 - No cash mode is enabled.
-- Practice scores are local-only and are not submitted to a server or leaderboard.
+- Verified practice scores are returned by the validation endpoint but are not submitted to a leaderboard.
+- The PHP runtime is validated in CI; the local workspace does not currently include a PHP binary.
 
 ## Next milestone
 
-Move practice sessions to signed server validation with replay events and a deterministic score verifier. Keep the virtual-only boundary in place until the replay protocol, anti-cheat rules and security tests are complete.
+Add virtual challenges, XP, tickets and achievements on top of the verified session boundary. Keep competitive tournaments and any cash capability disabled until anti-cheat, compliance and settlement phases are complete.
