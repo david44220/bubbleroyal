@@ -121,6 +121,12 @@ final class ReplayVerifier
             'shots_verified' => count($replay['shots']),
             'score' => $game['score'],
             'status' => $game['status'],
+            'best_combo' => $game['best_combo'],
+            'combo' => $game['combo'],
+            'misses' => $game['misses'],
+            'penalty_rows' => $game['penalty_rows'],
+            'shots_left' => $game['shots_left'],
+            'board_count' => BubblePracticeEngine::boardCount($game['board']),
             'board_signature' => BubblePracticeEngine::boardSignature($game['board']),
         ];
     }

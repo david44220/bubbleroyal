@@ -51,8 +51,14 @@ if ($method === 'GET' && ($path === '/' || $path === '/health')) {
     respond([
         'status' => 'ok',
         'service' => 'bubble-royale',
-        'phase' => '07-server-validation',
+        'phase' => '10-virtual-competition',
         'cash_mode' => false,
+        'features' => [
+            'verified_practice' => true,
+            'virtual_progression' => true,
+            'virtual_tournaments' => true,
+            'virtual_leaderboards' => true,
+        ],
     ]);
 }
 

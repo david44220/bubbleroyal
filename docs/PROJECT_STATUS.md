@@ -2,7 +2,7 @@
 
 ## Version
 
-`v0.3 — Deterministic replays and signed virtual session verification`
+`v0.4 — Virtual competition foundations`
 
 ## Completed
 
@@ -27,16 +27,21 @@
 - PHP 8.5 rules engine added with a cross-language deterministic seed vector.
 - HMAC-signed virtual practice sessions and server-side replay score verification added.
 - Framework-free front controller, `.env.example`, PHP protocol tests and GitHub Actions CI added.
+- Virtual challenges, XP, tickets and achievements added with idempotent verified-result grants.
+- Free virtual tournament catalog, schedules, lobbies and duplicate-entry protection added.
+- Replay review decisions, deterministic leaderboard ordering and idempotent virtual result publication added.
+- Addon manifests and phase reports added for Rewards, Tournaments and Leaderboards.
 
 ## Current limitations
 
 - The gameplay is not yet a production game engine.
-- Tournament values are visual/demo data only.
+- Tournament values are virtual/demo data only; phase 09 uses an explicit in-memory adapter.
 - No authentication, wallet, payment, KYC or withdrawal flow is active.
 - No cash mode is enabled.
-- Verified practice scores are returned by the validation endpoint but are not submitted to a leaderboard.
+- Verified scores are not yet connected to durable player accounts or an operator dashboard.
+- The phase 08–10 services are not yet wired to durable HTTP persistence across PHP workers.
 - The PHP runtime is validated in CI; the local workspace does not currently include a PHP binary.
 
 ## Next milestone
 
-Add virtual challenges, XP, tickets and achievements on top of the verified session boundary. Keep competitive tournaments and any cash capability disabled until anti-cheat, compliance and settlement phases are complete.
+Add authenticated account persistence and the virtual wallet/reward boundary. Keep any cash capability disabled until anti-cheat, compliance and settlement phases are complete.

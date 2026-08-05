@@ -4,7 +4,7 @@ Bubble Royale is a premium skill-based Bubble Shooter tournament platform with a
 
 ## Current status
 
-The repository currently contains the validated homepage, a playable virtual practice arena, deterministic replay tooling and a pure PHP server-validation boundary under [`prototype/`](prototype/) and [`public/`](public/).
+The repository currently contains the validated homepage, a playable virtual practice arena, deterministic replay tooling, server validation and virtual competition domain foundations under [`prototype/`](prototype/), [`addons/`](addons/) and [`public/`](public/).
 
 The homepage is available in two forms:
 
@@ -13,6 +13,9 @@ The homepage is available in two forms:
 - `prototype/practice/index.html`: playable virtual practice mode with deterministic board rules and local score only.
 - `prototype/practice/replay.js`: canonical replay recording, validation and export.
 - `public/index.php`: framework-free health, signed-session and replay-verification entry point.
+- `addons/Rewards/`: verified virtual challenges, XP, tickets and achievements.
+- `addons/Tournaments/`: free virtual tournament schedules, lobbies and entries.
+- `addons/Leaderboards/`: replay review, deterministic ranking and virtual publication.
 
 ## Product principles
 
@@ -27,4 +30,4 @@ The homepage is available in two forms:
 
 ## Roadmap
 
-The full staged roadmap is documented in [`docs/DEVELOPMENT_ROADMAP.md`](docs/DEVELOPMENT_ROADMAP.md). Phases 06 and 07 establish the deterministic replay and server-validation boundary; the next implementation target is virtual challenges, XP, tickets and achievements.
+The full staged roadmap is documented in [`docs/DEVELOPMENT_ROADMAP.md`](docs/DEVELOPMENT_ROADMAP.md). Phases 06–10 establish deterministic replays, server validation and virtual competition foundations; the next implementation target is authenticated durable persistence and the virtual wallet/reward boundary.

@@ -96,9 +96,9 @@ Recommended runtime stack: PHP 8.5, MySQL 8, Redis, S3/CDN, PWA service worker a
 5. Local Bubble Shooter game engine and practice screen (initial client implemented).
 6. Deterministic board seeds, replay format and score model (implemented with `br-replay-v1`).
 7. Signed game sessions and server-side score verification (implemented for virtual practice only).
-8. Practice challenges, XP, tickets and achievements.
-9. Tournament definitions, lobbies, entries and schedules.
-10. Leaderboards, tie-breaking, result publication and replay review.
+8. Practice challenges, XP, tickets and achievements (virtual domain implemented; durable account storage pending).
+9. Tournament definitions, lobbies, entries and schedules (free virtual domain implemented; durable persistence pending).
+10. Leaderboards, tie-breaking, result publication and replay review (virtual domain implemented; operator workflow pending).
 11. Virtual rewards and virtual wallet.
 12. Append-only ledger and sandbox prize-pool settlement.
 13. GeoFeature, age, KYC/KYB and responsible-play rule engine.
@@ -114,3 +114,7 @@ Recommended runtime stack: PHP 8.5, MySQL 8, Redis, S3/CDN, PWA service worker a
 ## 5. Phase acceptance rule
 
 Every phase must include its migration changes, automated tests, security checklist, UX/design verification, documentation, changelog, rollback notes and a short phase report. No phase is considered complete if it contains placeholder business logic, an unverified money flow or a hidden design deviation.
+
+## Virtual competition checkpoint
+
+Phases 08–10 are now implemented as framework-free, virtual-only domain services with explicit in-memory adapters and PHP tests. They are a validated foundation for the next authenticated/persistent integration; they do not claim production durability, cash eligibility or operator review readiness.
