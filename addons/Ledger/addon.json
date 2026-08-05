@@ -1,0 +1,27 @@
+{
+  "id": "ledger",
+  "version": "0.1.0",
+  "status": "virtual-sandbox-only",
+  "description": "Append-only virtual units ledger and sandbox prize-pool allocation.",
+  "permissions": [
+    "ledger.virtual.read",
+    "ledger.virtual.append",
+    "ledger.sandbox.settle"
+  ],
+  "policy_hooks": [
+    "sandbox_environment_required",
+    "published_virtual_result_required",
+    "double_entry_transfer",
+    "no_cash_settlement"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "seedSandboxPool",
+    "settleSandboxPublication",
+    "readVirtualLedger"
+  ],
+  "persistence_boundary": "VirtualLedgerStore with append-only MySQL migration; update/delete operations are outside the contract."
+}

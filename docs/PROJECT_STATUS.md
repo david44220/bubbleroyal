@@ -2,7 +2,7 @@
 
 ## Version
 
-`v0.4 — Virtual competition foundations`
+`v0.5 — Virtual economy and compliance foundations`
 
 ## Completed
 
@@ -31,6 +31,10 @@
 - Free virtual tournament catalog, schedules, lobbies and duplicate-entry protection added.
 - Replay review decisions, deterministic leaderboard ordering and idempotent virtual result publication added.
 - Addon manifests and phase reports added for Rewards, Tournaments and Leaderboards.
+- Ledger-backed virtual wallet for tickets and prize units added.
+- Append-only virtual ledger and sandbox prize-pool settlement added.
+- Configurable GeoFeature, age, KYC/KYB, risk and responsible-play gates added.
+- MySQL 8 migration added for virtual economy and privacy-minimized compliance profiles.
 
 ## Current limitations
 
@@ -40,8 +44,10 @@
 - No cash mode is enabled.
 - Verified scores are not yet connected to durable player accounts or an operator dashboard.
 - The phase 08–10 services are not yet wired to durable HTTP persistence across PHP workers.
+- Wallet, ledger and policy services use in-memory adapters until authenticated database repositories are wired.
+- KYC/KYB is represented only by verified status signals; no identity verification provider is connected.
 - The PHP runtime is validated in CI; the local workspace does not currently include a PHP binary.
 
 ## Next milestone
 
-Add authenticated account persistence and the virtual wallet/reward boundary. Keep any cash capability disabled until anti-cheat, compliance and settlement phases are complete.
+Add authenticated account persistence, anti-cheat/risk case workflows and the admin command center. Keep any cash capability disabled until legal, provider, compliance and settlement validation is complete.

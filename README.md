@@ -16,6 +16,10 @@ The homepage is available in two forms:
 - `addons/Rewards/`: verified virtual challenges, XP, tickets and achievements.
 - `addons/Tournaments/`: free virtual tournament schedules, lobbies and entries.
 - `addons/Leaderboards/`: replay review, deterministic ranking and virtual publication.
+- `addons/Wallet/`: ledger-backed virtual tickets and prize units.
+- `addons/Ledger/`: append-only virtual ledger and sandbox settlement.
+- `addons/GeoFeature/`: fail-closed feature, age, KYC/KYB, risk and responsible-play policy gates.
+- `database/migrations/0011_virtual_economy_and_compliance.sql`: MySQL 8 schema preparation for phases 11–13.
 
 ## Product principles
 
@@ -30,4 +34,4 @@ The homepage is available in two forms:
 
 ## Roadmap
 
-The full staged roadmap is documented in [`docs/DEVELOPMENT_ROADMAP.md`](docs/DEVELOPMENT_ROADMAP.md). Phases 06–10 establish deterministic replays, server validation and virtual competition foundations; the next implementation target is authenticated durable persistence and the virtual wallet/reward boundary.
+The full staged roadmap is documented in [`docs/DEVELOPMENT_ROADMAP.md`](docs/DEVELOPMENT_ROADMAP.md). Phases 06–13 establish deterministic replays, server validation, virtual competition, virtual economy and compliance foundations; the next implementation target is anti-cheat/risk cases and the admin command center.

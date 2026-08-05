@@ -40,4 +40,4 @@ jobs:
       - name: Run PHP protocol tests
         env:
           BUBBLE_ROYALE_SESSION_SECRET: ci-only-secret-change-me-0123456789
-        run: php tests/php/run.php && php tests/php/phase-08-10.php
+        run: php tests/php/run.php && php tests/php/phase-08-10.php && php tests/php/phase-11-13.php

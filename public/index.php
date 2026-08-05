@@ -51,13 +51,17 @@ if ($method === 'GET' && ($path === '/' || $path === '/health')) {
     respond([
         'status' => 'ok',
         'service' => 'bubble-royale',
-        'phase' => '10-virtual-competition',
+        'phase' => '13-compliance-foundation',
         'cash_mode' => false,
         'features' => [
             'verified_practice' => true,
             'virtual_progression' => true,
             'virtual_tournaments' => true,
             'virtual_leaderboards' => true,
+            'virtual_wallet' => true,
+            'sandbox_ledger' => true,
+            'cash_tournaments' => false,
+            'compliance_gates' => true,
         ],
     ]);
 }

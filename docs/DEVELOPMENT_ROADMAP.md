@@ -99,9 +99,9 @@ Recommended runtime stack: PHP 8.5, MySQL 8, Redis, S3/CDN, PWA service worker a
 8. Practice challenges, XP, tickets and achievements (virtual domain implemented; durable account storage pending).
 9. Tournament definitions, lobbies, entries and schedules (free virtual domain implemented; durable persistence pending).
 10. Leaderboards, tie-breaking, result publication and replay review (virtual domain implemented; operator workflow pending).
-11. Virtual rewards and virtual wallet.
-12. Append-only ledger and sandbox prize-pool settlement.
-13. GeoFeature, age, KYC/KYB and responsible-play rule engine.
+11. Virtual rewards and virtual wallet (implemented with ledger-backed virtual units; durable adapter prepared).
+12. Append-only ledger and sandbox prize-pool settlement (implemented for virtual units only).
+13. GeoFeature, age, KYC/KYB and responsible-play rule engine (implemented as a configurable fail-closed foundation).
 14. Anti-cheat, anti-fraud, risk cases and manual review tools.
 15. Admin Command Center, audit logs and kill switches.
 16. Payment provider abstraction, webhooks and reconciliation in sandbox.
@@ -117,4 +117,4 @@ Every phase must include its migration changes, automated tests, security checkl
 
 ## Virtual competition checkpoint
 
-Phases 08–10 are now implemented as framework-free, virtual-only domain services with explicit in-memory adapters and PHP tests. They are a validated foundation for the next authenticated/persistent integration; they do not claim production durability, cash eligibility or operator review readiness.
+Phases 08–13 are now implemented as framework-free, virtual-only domain services with explicit in-memory adapters, a MySQL migration and PHP tests. They are a validated foundation for the next authenticated/persistent integration; they do not claim production durability, cash eligibility or legal/provider readiness.

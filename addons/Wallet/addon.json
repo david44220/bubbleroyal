@@ -1,0 +1,27 @@
+{
+  "id": "wallet",
+  "version": "0.1.0",
+  "status": "virtual-only",
+  "description": "Virtual tickets and prize units backed by the append-only virtual ledger.",
+  "permissions": [
+    "wallet.virtual.read",
+    "wallet.virtual.reward",
+    "wallet.virtual.debit"
+  ],
+  "policy_hooks": [
+    "compliance_feature_gate",
+    "verified_progression_required",
+    "no_cash_balance",
+    "ledger_idempotency_required"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "readVirtualWallet",
+    "creditProgressionTickets",
+    "debitVirtualTickets"
+  ],
+  "persistence_boundary": "VirtualLedgerStore with MySQL migration prepared; no direct balance mutation is allowed."
+}
