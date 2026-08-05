@@ -1,0 +1,27 @@
+{
+  "id": "admin",
+  "version": "0.1.0",
+  "status": "operator-foundation",
+  "description": "Command center primitives, append-only audit events and kill switches.",
+  "permissions": [
+    "admin.audit.read",
+    "admin.kill_switch.read",
+    "admin.kill_switch.write"
+  ],
+  "policy_hooks": [
+    "role_permission_required",
+    "reason_required",
+    "cash_mode_immutable_off",
+    "audit_event_idempotency"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "readAuditTrail",
+    "readKillSwitches",
+    "updateVirtualKillSwitch"
+  ],
+  "persistence_boundary": "AuditLogStore and kill-switch repository with MySQL migration prepared."
+}

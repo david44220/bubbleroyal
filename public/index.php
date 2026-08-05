@@ -51,7 +51,7 @@ if ($method === 'GET' && ($path === '/' || $path === '/health')) {
     respond([
         'status' => 'ok',
         'service' => 'bubble-royale',
-        'phase' => '13-compliance-foundation',
+        'phase' => '21-cash-readiness-gate',
         'cash_mode' => false,
         'features' => [
             'verified_practice' => true,
@@ -60,8 +60,15 @@ if ($method === 'GET' && ($path === '/' || $path === '/health')) {
             'virtual_leaderboards' => true,
             'virtual_wallet' => true,
             'sandbox_ledger' => true,
+            'anti_fraud_review' => true,
+            'admin_audit' => true,
+            'sandbox_payments' => true,
+            'notifications_support' => true,
+            'pwa_shell' => true,
+            'virtual_alpha' => true,
             'cash_tournaments' => false,
             'compliance_gates' => true,
+            'cash_readiness_only' => true,
         ],
     ]);
 }

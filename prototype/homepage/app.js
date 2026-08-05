@@ -100,4 +100,12 @@
     }, { threshold: .7 });
     countObserver.observe(countTarget);
   }
+
+  if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {
+        // The homepage remains fully usable when service workers are unavailable.
+      });
+    });
+  }
 })();

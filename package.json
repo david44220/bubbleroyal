@@ -1,12 +1,14 @@
 {
   "name": "bubble-royale",
   "private": true,
-  "version": "0.5.0",
-  "description": "Bubble Royale prototype and deterministic virtual practice client",
+  "version": "0.6.0",
+  "description": "Bubble Royale prototype, deterministic virtual practice client and modular foundations",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "check": "npm run check:homepage && npm run check:practice",
+    "audit": "node tools/audit.mjs",
+    "check": "npm run check:homepage && npm run check:practice && npm run check:pwa",
     "check:homepage": "node --check prototype/homepage/app.js",
-    "check:practice": "node --check prototype/practice/engine.js && node --check prototype/practice/replay.js && node --check prototype/practice/practice.js"
+    "check:practice": "node --check prototype/practice/engine.js && node --check prototype/practice/replay.js && node --check prototype/practice/practice.js",
+    "check:pwa": "node --check prototype/homepage/sw.js && node --check prototype/practice/sw.js && node --check prototype/practice/pwa.js"
   }
 }

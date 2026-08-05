@@ -1,0 +1,21 @@
+{
+  "id": "analytics",
+  "version": "0.1.0",
+  "status": "operations-foundation",
+  "description": "Virtual operations summaries without exposing financial balances.",
+  "permissions": [
+    "analytics.operations.read"
+  ],
+  "policy_hooks": [
+    "virtual_cash_separation",
+    "aggregated_output"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "summarizeOperations"
+  ],
+  "persistence_boundary": "Analytics events are expected to be supplied by the future event pipeline."
+}

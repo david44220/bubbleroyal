@@ -1,0 +1,24 @@
+{
+  "id": "pwa",
+  "version": "0.1.0",
+  "status": "offline-shell-foundation",
+  "description": "Installable Bubble Royale shells with cache-first offline practice support.",
+  "permissions": [
+    "pwa.register",
+    "pwa.cache_shell"
+  ],
+  "policy_hooks": [
+    "virtual_practice_only",
+    "no_cash_actions_offline",
+    "network_required_for_server_validation"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "registerHomepageWorker",
+    "registerPracticeWorker"
+  ],
+  "persistence_boundary": "Browser cache only; no wallet, tournament or server result is written offline."
+}

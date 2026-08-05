@@ -55,19 +55,19 @@ Recommended runtime stack: PHP 8.5, MySQL 8, Redis, S3/CDN, PWA service worker a
 - English/French i18n;
 - PWA shell.
 
-### V1.5 — Sandbox economy
+### V1.5 — Sandbox economy and operations
 
 - virtual wallet;
 - test ledger;
-- simulated deposits and withdrawals;
+- sandbox payment intents without user funds or withdrawals;
 - prize-pool calculations;
 - GeoFeature and KYC sandbox;
 - anti-cheat and anti-fraud review;
 - staging VPS with no real value.
 
-### V2 — Controlled cash pilot
+### V2 — Controlled cash pilot (not activated)
 
-- approved payment providers;
+- approved payment providers after a separate reviewed integration;
 - geo-gated cash tournaments;
 - KYC and withdrawal controls;
 - pending settlement and manual review;
@@ -102,19 +102,19 @@ Recommended runtime stack: PHP 8.5, MySQL 8, Redis, S3/CDN, PWA service worker a
 11. Virtual rewards and virtual wallet (implemented with ledger-backed virtual units; durable adapter prepared).
 12. Append-only ledger and sandbox prize-pool settlement (implemented for virtual units only).
 13. GeoFeature, age, KYC/KYB and responsible-play rule engine (implemented as a configurable fail-closed foundation).
-14. Anti-cheat, anti-fraud, risk cases and manual review tools.
-15. Admin Command Center, audit logs and kill switches.
-16. Payment provider abstraction, webhooks and reconciliation in sandbox.
-17. Notifications, support, disputes and operational reporting.
-18. PWA performance, caching, offline practice and device compatibility.
-19. Full security, fairness, load and regression audit.
-20. Closed virtual alpha on staging VPS.
-21. Controlled cash pilot only after external compliance validation.
+14. Anti-cheat, anti-fraud, risk cases and manual review tools (implemented as virtual review foundation).
+15. Admin Command Center, audit logs and kill switches (implemented with cash immutable off).
+16. Payment provider abstraction, webhooks and reconciliation in sandbox (implemented without live provider access).
+17. Notifications, support, disputes and operational reporting (outbox and workflow foundations implemented).
+18. PWA performance, caching, offline practice and device compatibility (installable shell implemented).
+19. Full security, fairness, load and regression audit (automated repository audit and deterministic load sample implemented).
+20. Closed virtual alpha on staging VPS (allowlist policy and deployment blueprint implemented).
+21. Cash pilot readiness gate only after external compliance validation (checklist implemented; runtime activation disabled).
 
 ## 5. Phase acceptance rule
 
 Every phase must include its migration changes, automated tests, security checklist, UX/design verification, documentation, changelog, rollback notes and a short phase report. No phase is considered complete if it contains placeholder business logic, an unverified money flow or a hidden design deviation.
 
-## Virtual competition checkpoint
+## Phases 14–21 checkpoint
 
-Phases 08–13 are now implemented as framework-free, virtual-only domain services with explicit in-memory adapters, a MySQL migration and PHP tests. They are a validated foundation for the next authenticated/persistent integration; they do not claim production durability, cash eligibility or legal/provider readiness.
+Phases 08–21 are now implemented as framework-free, virtual-only or sandbox-gated domain services with explicit in-memory adapters, MySQL migrations, JavaScript/PHP tests and rollback notes. They are a validated foundation for the next authenticated/persistent integration; they do not claim production durability, cash eligibility or legal/provider readiness. The cash-readiness gate is a checklist, not an activation path.

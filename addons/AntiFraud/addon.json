@@ -1,0 +1,27 @@
+{
+  "id": "anti-fraud",
+  "version": "0.1.0",
+  "status": "virtual-first",
+  "description": "Deterministic anti-cheat signals, risk scoring and manual review cases.",
+  "permissions": [
+    "risk.read",
+    "risk.open",
+    "risk.review"
+  ],
+  "policy_hooks": [
+    "server_verified_result_required",
+    "bounded_telemetry_only",
+    "manual_review_for_high_risk",
+    "no_direct_wallet_mutation"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "inspectVerifiedResult",
+    "openRiskCase",
+    "reviewRiskCase"
+  ],
+  "persistence_boundary": "RiskCaseStore with MySQL migration prepared; review history remains auditable."
+}

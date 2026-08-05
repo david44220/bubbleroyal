@@ -1,0 +1,30 @@
+{
+  "id": "payments",
+  "version": "0.1.0",
+  "status": "sandbox-only",
+  "description": "Provider abstraction, signed webhooks and reconciliation without live payment access.",
+  "permissions": [
+    "payments.sandbox.create",
+    "payments.sandbox.capture",
+    "payments.sandbox.refund",
+    "payments.sandbox.reconcile"
+  ],
+  "policy_hooks": [
+    "sandbox_environment_required",
+    "integer_minor_units_only",
+    "signed_webhook_required",
+    "live_provider_disabled",
+    "no_cash_wallet_bridge"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "createSandboxIntent",
+    "captureSandboxIntent",
+    "refundSandboxIntent",
+    "reconcileSandboxEvents"
+  ],
+  "persistence_boundary": "Payment intent and webhook migrations are prepared; provider credentials are intentionally absent."
+}

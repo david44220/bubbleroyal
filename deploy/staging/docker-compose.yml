@@ -1,0 +1,42 @@
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: deploy/staging/Dockerfile
+    ports:
+      - "8080:80"
+    env_file:
+      - .env
+    environment:
+      APP_ENV: staging
+      BUBBLE_ROYALE_SESSION_SECRET: ${BUBBLE_ROYALE_SESSION_SECRET:?copy .env.example to .env and set a local value}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-bubble_royale_staging}
+      MYSQL_USER: ${MYSQL_USER:-bubble_royale}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set a local staging password}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set a local staging root password}
+    volumes:
+      - bubble-royale-staging-db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - bubble-royale-staging-redis:/data
+
+volumes:
+  bubble-royale-staging-db:
+  bubble-royale-staging-redis:
