@@ -5,8 +5,6 @@ services:
       dockerfile: deploy/staging/Dockerfile
     ports:
       - "8080:80"
-    env_file:
-      - .env
     environment:
       APP_ENV: staging
       BUBBLE_ROYALE_SESSION_SECRET: ${BUBBLE_ROYALE_SESSION_SECRET:?copy .env.example to .env and set a local value}

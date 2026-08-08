@@ -21,6 +21,7 @@ use Addons\Rewards\Infrastructure\PdoProgressionStore;
 use Addons\Tournaments\Domain\VirtualTournamentService;
 use Addons\Tournaments\Infrastructure\PdoVirtualTournamentStore;
 use App\Core\Database\Connection;
+use App\Core\Support\CanonicalJson;
 
 function persistenceTrue(bool $condition, string $message): void
 {
@@ -82,7 +83,7 @@ $game->create($retryClaims, hash('sha256', 'persistence-retry-token-' . $suffix)
 $finalPayload = ['verified' => true, 'verification' => ['valid' => true, 'score' => 42], 'cash_mode' => false];
 persistenceTrue($game->finalize($retryClaims['session_id'], $finalPayload, time()), 'PDO game sessions must finalize a response once.');
 persistenceTrue(!$game->finalize($retryClaims['session_id'], $finalPayload, time()), 'PDO final responses must be idempotent.');
-persistenceTrue($game->result($retryClaims['session_id']) === $finalPayload, 'PDO final responses must be recoverable.');
+persistenceTrue(CanonicalJson::encode($game->result($retryClaims['session_id'])) === CanonicalJson::encode($finalPayload), 'PDO final responses must be recoverable.');
 
 $progression = new ProgressionService(new PdoProgressionStore($connection));
 $verification = [
