@@ -15,7 +15,7 @@ final class KillSwitchService
 
     public function isEnabled(string $flag): bool
     {
-        if (!array_key_exists($flag, $this->flags)) {
+        if (!array_key_exists($flag, $this->all())) {
             throw new InvalidArgumentException('Unknown kill switch.');
         }
         return $this->all()[$flag];
@@ -29,7 +29,7 @@ final class KillSwitchService
 
     public function set(string $flag, bool $enabled, ?string $reason = null, ?string $updatedBy = null, ?int $at = null): array
     {
-        if (!array_key_exists($flag, $this->flags)) {
+        if (!array_key_exists($flag, $this->all())) {
             throw new InvalidArgumentException('Unknown kill switch.');
         }
         if ($flag === 'cash_mode' && $enabled) {

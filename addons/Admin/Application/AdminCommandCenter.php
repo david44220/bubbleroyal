@@ -7,6 +7,7 @@ namespace Addons\Admin\Application;
 use Addons\Admin\Domain\AuditLogService;
 use Addons\Admin\Domain\KillSwitchService;
 use InvalidArgumentException;
+use LogicException;
 
 final class AdminCommandCenter
 {
@@ -30,6 +31,22 @@ final class AdminCommandCenter
         $reason = trim($reason);
         if ($reason === '' || strlen($reason) > 1000) {
             throw new InvalidArgumentException('A kill-switch change requires a reason.');
+        }
+        $existing = $this->audit->find($eventId);
+        if ($existing !== null) {
+            $metadata = is_array($existing['metadata'] ?? null) ? $existing['metadata'] : [];
+            if (($existing['actor_id'] ?? null) !== $actorId
+                || ($existing['action'] ?? null) !== 'kill_switch.update'
+                || ($existing['resource'] ?? null) !== $flag
+                || ($metadata['reason'] ?? null) !== $reason
+                || ($metadata['enabled'] ?? null) !== $enabled) {
+                throw new LogicException('The admin idempotency key already represents another change.');
+            }
+            return [
+                'switches' => $this->killSwitches->all(),
+                'audit' => ['idempotent' => true, 'event' => $existing],
+                'cash_mode' => false,
+            ];
         }
         $before = $this->killSwitches->all();
         $after = $this->killSwitches->set($flag, $enabled, $reason, $actorId, $createdAt);

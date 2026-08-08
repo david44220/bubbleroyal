@@ -54,6 +54,12 @@ final class AuditLogService
         return $this->store->all();
     }
 
+    /** @return array<string,mixed>|null */
+    public function find(string $eventId): ?array
+    {
+        return $this->store->findByEventId($eventId);
+    }
+
     private function sanitize(array $metadata): array
     {
         $sanitized = [];
