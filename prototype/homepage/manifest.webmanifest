@@ -1,0 +1,19 @@
+{
+  "name": "Bubble Royale",
+  "short_name": "Bubble Royale",
+  "description": "A premium skill-based Bubble Shooter arena.",
+  "lang": "en",
+  "start_url": "./index-modular.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#050711",
+  "theme_color": "#050711",
+  "icons": [
+    {
+      "src": "assets/bubble-royale-logo.png",
+      "sizes": "2008x783",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

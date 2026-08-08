@@ -1,0 +1,24 @@
+{
+  "id": "notifications",
+  "version": "0.1.0",
+  "status": "outbox-foundation",
+  "description": "Idempotent in-app, email and push notification outbox.",
+  "permissions": [
+    "notifications.enqueue",
+    "notifications.read"
+  ],
+  "policy_hooks": [
+    "dedupe_key_required",
+    "safe_payload_only",
+    "provider_dispatch_deferred"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "enqueueNotification",
+    "readNotificationOutbox"
+  ],
+  "persistence_boundary": "NotificationOutboxStore with MySQL outbox migration prepared."
+}

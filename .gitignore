@@ -1,0 +1,31 @@
+# Local development
+.env
+.env.*
+!.env.example
+vendor/
+node_modules/
+.phpunit.result.cache
+.phpunit.cache/
+.DS_Store
+Thumbs.db
+
+# Runtime data
+storage/cache/*
+storage/logs/*
+storage/sessions/*
+storage/uploads/*
+!storage/cache/.gitkeep
+!storage/logs/.gitkeep
+!storage/sessions/.gitkeep
+!storage/uploads/.gitkeep
+
+# Local tooling
+.idea/
+.vscode/
+*.swp
+
+# Build artifacts
+dist/
+build/
+coverage/
+*.zip

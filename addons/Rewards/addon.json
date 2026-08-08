@@ -1,0 +1,24 @@
+{
+  "id": "rewards",
+  "version": "0.1.0",
+  "status": "virtual-only",
+  "description": "Verified-run challenges, XP, virtual tickets and achievements.",
+  "permissions": [
+    "rewards.read",
+    "rewards.progress"
+  ],
+  "policy_hooks": [
+    "verified_replay_required",
+    "virtual_mode_only",
+    "idempotent_event_required"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "getProgression",
+    "applyVerifiedResult"
+  ],
+  "persistence_boundary": "ProgressionStore; database adapter is intentionally deferred."
+}

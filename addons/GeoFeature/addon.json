@@ -1,0 +1,28 @@
+{
+  "id": "geo-feature",
+  "version": "0.1.0",
+  "status": "policy-foundation",
+  "description": "Configurable feature, geo, age, KYC/KYB, risk and responsible-play gates.",
+  "permissions": [
+    "geo_feature.evaluate",
+    "compliance.policy.read"
+  ],
+  "policy_hooks": [
+    "country_allow_deny",
+    "age_verification",
+    "kyc_kyb_status",
+    "risk_score",
+    "responsible_play_limits",
+    "cash_mode_disabled"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "evaluateFeature",
+    "evaluateVirtualWallet",
+    "evaluateSandboxPool"
+  ],
+  "persistence_boundary": "Policy rules and compliance profile migrations are prepared; no identity document data is stored by this phase."
+}

@@ -1,0 +1,26 @@
+{
+  "id": "leaderboards",
+  "version": "0.1.0",
+  "status": "virtual-only",
+  "description": "Deterministic ranking, replay review and virtual result publication.",
+  "permissions": [
+    "leaderboards.read",
+    "leaderboards.review",
+    "leaderboards.publish"
+  ],
+  "policy_hooks": [
+    "server_verified_result_required",
+    "approved_replay_required",
+    "cash_mode_disabled"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "reviewReplay",
+    "rankVerifiedEntries",
+    "publishVirtualResults"
+  ],
+  "persistence_boundary": "ResultPublicationService is an in-memory adapter for the phase; durable audit storage is a later migration."
+}

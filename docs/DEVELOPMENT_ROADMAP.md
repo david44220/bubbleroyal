@@ -1,0 +1,120 @@
+# Bubble Royale Development Roadmap
+
+## 1. Product scope
+
+Bubble Royale is a skill-based Bubble Shooter platform. The initial product focuses on a polished game loop, fair scoring, tournaments and virtual rewards. Cash tournaments are a later, geo-gated capability and remain disabled by default until the relevant legal, age, KYC/KYB, payment-provider, risk and anti-fraud conditions are satisfied.
+
+## 2. Target architecture
+
+```text
+public/                 HTTP entry point and PWA shell
+app/Core/               shared kernel, configuration and contracts
+addons/Identity/        authentication and account security
+addons/Game/            Bubble Shooter rules and game definitions
+addons/GameSessions/    signed sessions, replays and score events
+addons/Tournaments/     lobbies, entries, scheduling and settlement
+addons/Leaderboards/    ranking and result publication
+addons/Wallet/          virtual wallet and future cash-wallet boundary
+addons/Ledger/          append-only financial journal
+addons/Payments/        provider adapters and reconciliation
+addons/Compliance/      age, KYC/KYB, responsible-play and case workflow
+addons/GeoFeature/      country, region, provider and feature gates
+addons/AntiFraud/       anti-cheat, risk scoring and review cases
+addons/Rewards/         missions, streaks, tickets and achievements
+addons/Revenue/         confirmed revenue and prize-pool contributions
+addons/Notifications/   email, push and in-app notifications
+addons/Support/         tickets, disputes and player communication
+addons/Admin/            command center and kill switches
+addons/Analytics/       product, game and financial reporting
+database/migrations/    versioned MySQL schema changes
+tests/                  unit, integration, API, security and game replay tests
+prototype/              validated design and frontend prototypes
+```
+
+Recommended runtime stack: PHP 8.5, MySQL 8, Redis, S3/CDN, PWA service worker and a TypeScript/Canvas game client. The frontend client is never trusted for score or financial decisions.
+
+## 3. Release stages
+
+### V0 — Design and prototype
+
+- homepage and visual source of truth;
+- isolated assets;
+- responsive standalone preview;
+- validated UX direction.
+
+### V1 — Virtual Skill Arena
+
+- account and onboarding;
+- practice mode (implemented in `prototype/practice/`);
+- playable Bubble Shooter client;
+- deterministic scoring;
+- virtual tournaments;
+- leaderboards;
+- virtual rewards;
+- admin configuration;
+- English/French i18n;
+- PWA shell.
+
+### V1.5 — Sandbox economy and operations
+
+- virtual wallet;
+- test ledger;
+- sandbox payment intents without user funds or withdrawals;
+- prize-pool calculations;
+- GeoFeature and KYC sandbox;
+- anti-cheat and anti-fraud review;
+- staging VPS with no real value.
+
+### V2 — Controlled cash pilot (not activated)
+
+- approved payment providers after a separate reviewed integration;
+- geo-gated cash tournaments;
+- KYC and withdrawal controls;
+- pending settlement and manual review;
+- reconciled prize pools;
+- risk limits and responsible-play tools;
+- support and dispute workflows.
+
+### V3 — Growth ecosystem
+
+- seasons and clans;
+- sponsored tournaments;
+- referrals;
+- creator events;
+- team competitions;
+- push notifications;
+- developer API;
+- white-label tournament tools;
+- additional skill-based games.
+
+## 4. Ordered implementation phases
+
+1. Product rules, game fairness rules and cash-mode boundaries.
+2. Repository conventions, CI, environment templates and PHP bootstrap.
+3. Design tokens, i18n, responsive shell and authenticated layout patterns.
+4. Authentication, sessions, profile and security center.
+5. Local Bubble Shooter game engine and practice screen (initial client implemented).
+6. Deterministic board seeds, replay format and score model (implemented with `br-replay-v1`).
+7. Signed game sessions and server-side score verification (implemented for virtual practice only).
+8. Practice challenges, XP, tickets and achievements (virtual domain and durable progression persistence implemented).
+9. Tournament definitions, lobbies, entries and schedules (free virtual domain and durable persistence implemented).
+10. Leaderboards, tie-breaking, result publication and replay review (virtual domain implemented; public APIs redact internal player identifiers).
+11. Virtual rewards and virtual wallet (implemented with ledger-backed virtual units and a persistent ledger adapter; policy access remains fail-closed).
+12. Append-only ledger and sandbox prize-pool settlement (implemented for virtual units only).
+13. GeoFeature, age, KYC/KYB and responsible-play rule engine (implemented as a configurable fail-closed foundation).
+14. Anti-cheat, anti-fraud, risk cases and manual review tools (implemented as virtual review foundation).
+15. Admin Command Center, audit logs and kill switches (implemented with cash immutable off).
+16. Payment provider abstraction, webhooks and reconciliation in sandbox (implemented without live provider access).
+17. Notifications, support, disputes and operational reporting (outbox and workflow foundations implemented).
+18. PWA performance, caching, offline practice and device compatibility (installable shell implemented).
+19. Full security, fairness, load and regression audit (automated repository audit and deterministic load sample implemented).
+20. Closed virtual alpha on staging VPS (allowlist policy and deployment blueprint implemented).
+21. Cash pilot readiness gate only after external compliance validation (checklist implemented; runtime activation disabled).
+
+## 5. Phase acceptance rule
+
+Every phase must include its migration changes, automated tests, security checklist, UX/design verification, documentation, changelog, rollback notes and a short phase report. No phase is considered complete if it contains placeholder business logic, an unverified money flow or a hidden design deviation.
+
+## Production virtual-platform checkpoint
+
+Phases 08–21 are implemented as framework-free, virtual-only or sandbox-gated domain services with MySQL persistence, Redis rate limiting, JavaScript/PHP tests, durable retry receipts and deployment checks. The virtual runtime is production-shaped, but public launch still depends on the runbook’s infrastructure, monitoring, support and external-service gates. The cash-readiness gate is a checklist, not an activation path.

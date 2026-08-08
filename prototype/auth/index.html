@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050711" />
+    <meta name="description" content="Create or access your Bubble Royale player account." />
+    <title>Bubble Royale — Account</title>
+    <link rel="stylesheet" href="auth.css" />
+  </head>
+  <body>
+    <main class="auth-shell">
+      <a class="auth-brand" href="/homepage/index-modular.html" aria-label="Return to Bubble Royale home">
+        <img src="/homepage/assets/bubble-royale-logo.png" alt="Bubble Royale" />
+      </a>
+      <section class="auth-card" aria-labelledby="auth-title">
+        <div class="auth-kicker">PLAYER ACCESS / VIRTUAL MODE</div>
+        <h1 id="auth-title">Enter the arena.</h1>
+        <p id="auth-copy">Create an account to keep your verified virtual progression across devices.</p>
+        <div class="auth-tabs" role="tablist" aria-label="Account actions">
+          <button class="auth-tab is-active" type="button" data-mode="login" role="tab" aria-selected="true">Log in</button>
+          <button class="auth-tab" type="button" data-mode="register" role="tab" aria-selected="false">Create account</button>
+        </div>
+        <form id="auth-form" novalidate>
+          <label class="field field-register" hidden>
+            <span>Display name</span>
+            <input name="display_name" autocomplete="nickname" minlength="2" maxlength="80" />
+          </label>
+          <label class="field">
+            <span>Email</span>
+            <input name="email" type="email" autocomplete="email" required maxlength="320" />
+          </label>
+          <label class="field">
+            <span>Password</span>
+            <input name="password" type="password" autocomplete="current-password" minlength="12" maxlength="200" required />
+          </label>
+          <button class="auth-submit" type="submit">Log in <span aria-hidden="true">↗</span></button>
+          <p class="auth-message" id="auth-message" role="status" aria-live="polite"></p>
+        </form>
+        <p class="auth-footnote">Virtual mode only. No payment, withdrawal or cash conversion is available.</p>
+      </section>
+    </main>
+    <script src="auth.js"></script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "id": "alpha",
+  "version": "0.1.0",
+  "status": "virtual-staging-only",
+  "description": "Allowlisted virtual alpha access with explicit staging and risk gates.",
+  "permissions": [
+    "alpha.evaluate",
+    "alpha.allowlist.read"
+  ],
+  "policy_hooks": [
+    "staging_only",
+    "allowlist_optional",
+    "virtual_value_only",
+    "cash_mode_immutable_off",
+    "risk_acceptance_required"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "evaluateVirtualAlphaAccess"
+  ],
+  "persistence_boundary": "Only alpha access grants are prepared; no cash balance, withdrawal or payment entitlement is created."
+}

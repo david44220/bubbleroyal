@@ -1,0 +1,25 @@
+{
+  "id": "compliance",
+  "version": "0.1.0",
+  "status": "cash-readiness-only",
+  "description": "External-review readiness checklist that keeps runtime cash mode disabled.",
+  "permissions": [
+    "compliance.readiness.evaluate",
+    "compliance.attestation.read"
+  ],
+  "policy_hooks": [
+    "external_legal_review",
+    "geo_age_kyc_kyb_controls",
+    "risk_and_responsible_play",
+    "provider_reconciliation",
+    "cash_mode_immutable_off"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "evaluateCashPilotReadiness"
+  ],
+  "persistence_boundary": "Readiness attestations may be stored as review metadata; no cash balance, withdrawal or conversion record is created."
+}

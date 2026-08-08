@@ -1,0 +1,19 @@
+{
+  "name": "Bubble Royale Practice Arena",
+  "short_name": "BR Practice",
+  "description": "Offline-capable virtual Bubble Royale practice arena.",
+  "lang": "en",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#050711",
+  "theme_color": "#050711",
+  "icons": [
+    {
+      "src": "../homepage/assets/bubble-royale-logo.png",
+      "sizes": "2008x783",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

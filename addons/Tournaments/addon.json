@@ -1,0 +1,25 @@
+{
+  "id": "tournaments",
+  "version": "0.1.0",
+  "status": "virtual-only",
+  "description": "Free virtual tournament definitions, lobbies, entries and schedules.",
+  "permissions": [
+    "tournaments.read",
+    "tournaments.enter"
+  ],
+  "policy_hooks": [
+    "verified_replay_required",
+    "virtual_mode_only",
+    "free_entry_only"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "listVirtualTournaments",
+    "readTournamentLobby",
+    "enterVirtualTournament"
+  ],
+  "persistence_boundary": "VirtualTournamentService uses an in-memory adapter locally and a MySQL adapter for staging/production; recurring periods receive immutable IDs."
+}

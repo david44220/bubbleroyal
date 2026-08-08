@@ -1,0 +1,26 @@
+{
+  "id": "support",
+  "version": "0.1.0",
+  "status": "virtual-first",
+  "description": "Support tickets and result/responsible-play dispute workflow primitives.",
+  "permissions": [
+    "support.create",
+    "support.read",
+    "support.transition"
+  ],
+  "policy_hooks": [
+    "bounded_message_length",
+    "ticket_event_idempotency",
+    "no_direct_financial_resolution"
+  ],
+  "design_source": [
+    "prototype/homepage/index-modular.html",
+    "prototype/practice/index.html"
+  ],
+  "actions": [
+    "createTicket",
+    "transitionTicket",
+    "listTickets"
+  ],
+  "persistence_boundary": "SupportTicketStore with MySQL migration prepared."
+}
