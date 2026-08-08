@@ -170,6 +170,23 @@ final class PdoVirtualTournamentStore implements VirtualTournamentStore
             if ($this->connection->inTransaction()) {
                 $this->connection->rollBack();
             }
+            $byPlayer = $this->connection->prepare(
+                'SELECT entry_id, tournament_id, player_id, verified_session_id, verified, mode, value_type, entry_type, '
+                . 'ticket_cost, cash_mode, score, status, best_combo, shots_used, replay_review, '
+                . 'UNIX_TIMESTAMP(verified_at) AS verified_at, reviewed_by, UNIX_TIMESTAMP(reviewed_at) AS reviewed_at, review_id '
+                . 'FROM br_virtual_tournament_entries WHERE tournament_id = :tournament_id AND player_id = :player_id LIMIT 1',
+            );
+            $byPlayer->execute([
+                'tournament_id' => $entry['tournament_id'],
+                'player_id' => $entry['player_id'],
+            ]);
+            $existingEntry = $byPlayer->fetch();
+            if (is_array($existingEntry)) {
+                return [
+                    'created' => false,
+                    'entry' => $this->normaliseEntries([$existingEntry])[0],
+                ];
+            }
             $bySession = $this->connection->prepare(
                 'SELECT player_id FROM br_virtual_tournament_entries WHERE verified_session_id = :session LIMIT 1',
             );

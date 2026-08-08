@@ -65,3 +65,16 @@ jobs:
           DB_USERNAME: bubble_royale
           DB_PASSWORD: bubble_royale_ci_password
         run: php tools/migrate.php && php tests/php/run.php && php tests/php/identity.php && php tests/php/persistence.php && php tests/php/phase-08-10.php && php tests/php/phase-11-13.php && php tests/php/phase-14.php && php tests/php/phase-15.php && php tests/php/phase-16.php && php tests/php/phase-17.php && php tests/php/phase-20.php && php tests/php/phase-21.php
+
+  deployment:
+    name: Container and Apache deployment checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate compose configuration
+        run: docker compose --env-file deploy/staging/.env.example -f deploy/staging/docker-compose.yml config --quiet
+      - name: Build production-shaped image
+        run: docker build --file deploy/staging/Dockerfile --tag bubble-royale-ci:latest .
+      - name: Validate Apache configuration
+        run: docker run --rm --entrypoint apachectl bubble-royale-ci:latest -t

@@ -43,6 +43,7 @@ use Addons\Tournaments\Domain\VirtualTournamentService;
 use Addons\Tournaments\Infrastructure\PdoVirtualTournamentStore;
 use Addons\Wallet\Domain\VirtualWalletService;
 use App\Core\Database\Connection;
+use App\Core\Support\CanonicalJson;
 use App\Core\Security\RateLimiter;
 use App\Core\Security\RedisRateLimiter;
 
@@ -100,7 +101,7 @@ function runtime(): array
         (string) (getenv('RATE_LIMIT_PATH') ?: dirname(__DIR__) . '/storage/cache/rate-limits'),
     );
     $redisConfigured = trim((string) (getenv('REDIS_HOST') ?: '')) !== '';
-    $redisReady = !$redisConfigured;
+    $redisReady = !$redisConfigured && !isProductionEnvironment();
     $redisError = null;
     if ($redisConfigured) {
         try {
@@ -359,7 +360,72 @@ function complianceContext(array $runtime, string $playerId): array
     ];
 }
 
-/** @return array{claims:array<string,mixed>,result:array<string,mixed>,stored:array<string,mixed>} */
+function publicPlayerRef(mixed $playerId): string
+{
+    return 'player_' . substr(hash('sha256', 'br-public-player|' . (string) $playerId), 0, 12);
+}
+
+/** @param array<string,mixed> $entry @return array<string,mixed> */
+function publicTournamentEntry(array $entry): array
+{
+    $public = [];
+    foreach ([
+        'entry_id', 'tournament_id', 'verified', 'mode', 'value_type', 'entry_type',
+        'ticket_cost', 'cash_mode', 'score', 'status', 'best_combo', 'shots_used', 'verified_at',
+    ] as $key) {
+        if (array_key_exists($key, $entry)) {
+            $public[$key] = $entry[$key];
+        }
+    }
+    if (array_key_exists('player_id', $entry)) {
+        $public['player_ref'] = publicPlayerRef($entry['player_id']);
+    }
+    return $public;
+}
+
+/** @param array<string,mixed> $lobby @return array<string,mixed> */
+function publicTournamentLobby(array $lobby): array
+{
+    $public = $lobby;
+    $public['entries'] = array_map(
+        static fn (mixed $entry): array => is_array($entry) ? publicTournamentEntry($entry) : [],
+        is_array($lobby['entries'] ?? null) ? $lobby['entries'] : [],
+    );
+    return $public;
+}
+
+/** @param array<string,mixed> $row @return array<string,mixed> */
+function publicLeaderboardRow(array $row): array
+{
+    $public = [];
+    foreach (['rank', 'entry_id', 'score', 'best_combo', 'shots_used', 'status'] as $key) {
+        if (array_key_exists($key, $row)) {
+            $public[$key] = $row[$key];
+        }
+    }
+    if (array_key_exists('player_id', $row)) {
+        $public['player_ref'] = publicPlayerRef($row['player_id']);
+    }
+    return $public;
+}
+
+/** @param array<string,mixed> $payload @return array<string,mixed> */
+function finalizePracticeResponse(array $runtime, string $sessionId, array $payload): array
+{
+    /** @var GameSessionStore $gameSessions */
+    $gameSessions = $runtime['game_sessions'];
+    $created = $gameSessions->finalize($sessionId, $payload, time());
+    $stored = $gameSessions->result($sessionId);
+    if ($stored === null) {
+        respond(['error' => 'session_already_consumed'], 409);
+    }
+    if (!$created) {
+        $stored['idempotent'] = true;
+    }
+    return $stored;
+}
+
+/** @return array{claims:array<string,mixed>,result:array<string,mixed>,stored:array<string,mixed>,final_result:array<string,mixed>|null} */
 function inspectPracticeReplay(array $runtime, array $body, ?array $auth): array
 {
     $token = $body['session_token'] ?? null;
@@ -392,12 +458,19 @@ function inspectPracticeReplay(array $runtime, array $body, ?array $auth): array
         if (($stored['player_id'] ?? null) !== ($claims['player_id'] ?? null)) {
             respond(['error' => 'session_binding_invalid'], 401);
         }
-        if (($stored['consumed_at'] ?? null) !== null) {
-            respond(['error' => 'session_already_consumed'], 409);
-        }
         $result = (new ReplayVerifier())->verify($replay, $claims);
         if ($result['valid'] !== true) {
             respond(['error' => 'replay_rejected', 'verification' => $result, 'cash_mode' => false], 422);
+        }
+        /** @var GameSessionStore $gameSessions */
+        $finalResult = $gameSessions->result((string) $claims['session_id']);
+        if (($stored['consumed_at'] ?? null) !== null && $finalResult === null) {
+            respond(['error' => 'session_already_consumed'], 409);
+        }
+        if ($finalResult !== null
+            && is_array($finalResult['verification'] ?? null)
+            && CanonicalJson::encode($finalResult['verification']) !== CanonicalJson::encode($result)) {
+            respond(['error' => 'session_already_finalized'], 409);
         }
     } catch (JsonException) {
         respond(['error' => 'invalid_json'], 400);
@@ -405,16 +478,12 @@ function inspectPracticeReplay(array $runtime, array $body, ?array $auth): array
         respond(['error' => 'invalid_or_expired_session'], 401);
     }
 
-    return ['claims' => $claims, 'result' => $result, 'stored' => $stored];
-}
-
-function consumePracticeReplay(array $runtime, string $sessionId): void
-{
-    /** @var GameSessionStore $gameSessions */
-    $gameSessions = $runtime['game_sessions'];
-    if (!$gameSessions->consume($sessionId, time())) {
-        respond(['error' => 'session_already_consumed'], 409);
-    }
+    return [
+        'claims' => $claims,
+        'result' => $result,
+        'stored' => $stored,
+        'final_result' => $finalResult,
+    ];
 }
 
 /** @return array<string,mixed>|null */
@@ -485,7 +554,9 @@ if ($method === 'GET' && $path === '/health') {
         'environment' => appEnvironment(),
         'cash_mode' => false,
         'persistence' => $databaseReady ? 'mysql' : 'memory',
-        'rate_limiting' => $runtime['redis_ready'] ? 'redis' : 'unavailable',
+        'rate_limiting' => $runtime['redis_configured']
+            ? ($runtime['redis_ready'] ? 'redis' : 'unavailable')
+            : 'local-file',
         'features' => [
             'homepage' => true,
             'verified_practice' => true,
@@ -533,7 +604,7 @@ if ($method === 'GET' && preg_match('#^/api/v1/tournaments/([^/]+)/lobby$#', $pa
     respond([
         'value_type' => 'virtual',
         'cash_mode' => false,
-        'lobby' => $lobby,
+        'lobby' => publicTournamentLobby($lobby),
     ]);
 }
 
@@ -550,7 +621,10 @@ if ($method === 'GET' && preg_match('#^/api/v1/tournaments/([^/]+)/leaderboard$#
         'tournament' => $lobby['tournament'],
         'value_type' => 'virtual',
         'cash_mode' => false,
-        'rows' => $rows,
+        'rows' => array_map(
+            static fn (array $row): array => publicLeaderboardRow($row),
+            $rows,
+        ),
         'publication_status' => 'not_published',
     ]);
 }
@@ -763,6 +837,9 @@ if ($path === '/api/v1/practice/sessions/verify') {
         requireCsrf($runtime, $auth);
     }
     $verified = inspectPracticeReplay($runtime, $body, $auth);
+    if ($verified['final_result'] !== null) {
+        respond($verified['final_result']);
+    }
     $inspection = $runtime['anti_cheat']->inspect(
         $auth === null ? 'anonymous:' . $verified['claims']['session_id'] : (string) $auth['user']['id'],
         $verified['result'],
@@ -778,14 +855,14 @@ if ($path === '/api/v1/practice/sessions/verify') {
         $verified['result'],
         (string) $verified['claims']['session_id'],
     );
-    consumePracticeReplay($runtime, (string) $verified['claims']['session_id']);
-
-    respond([
+    $payload = [
         'verified' => true,
         'verification' => $verified['result'],
         'progression' => $progression,
         'cash_mode' => false,
-    ]);
+        'idempotent' => false,
+    ];
+    respond(finalizePracticeResponse($runtime, (string) $verified['claims']['session_id'], $payload));
 }
 
 if (preg_match('#^/api/v1/tournaments/([^/]+)/enter$#', $path, $matches) === 1) {
@@ -795,6 +872,9 @@ if (preg_match('#^/api/v1/tournaments/([^/]+)/enter$#', $path, $matches) === 1) 
     $auth = requireAuth($runtime);
     requireCsrf($runtime, $auth);
     $verified = inspectPracticeReplay($runtime, $body, $auth);
+    if ($verified['final_result'] !== null) {
+        respond($verified['final_result']);
+    }
     $inspection = $runtime['anti_cheat']->inspect(
         (string) $auth['user']['id'],
         $verified['result'],
@@ -816,18 +896,22 @@ if (preg_match('#^/api/v1/tournaments/([^/]+)/enter$#', $path, $matches) === 1) 
             $verified['result'],
             (string) $verified['claims']['session_id'],
         );
-        consumePracticeReplay($runtime, (string) $verified['claims']['session_id']);
     } catch (InvalidArgumentException $exception) {
         respond(['error' => 'tournament_entry_rejected', 'message' => $exception->getMessage()], 422);
     } catch (Throwable) {
         respond(['error' => 'tournament_entry_failed'], 503);
     }
-    respond([
+    $payload = [
         'value_type' => 'virtual',
         'cash_mode' => false,
-        'entry' => $entry,
+        'verification' => $verified['result'],
+        'entry' => publicTournamentEntry($entry['entry']),
+        'lobby' => publicTournamentLobby($entry['lobby']),
         'progression' => $progression,
-    ], $entry['idempotent'] ? 200 : 201);
+        'idempotent' => $entry['idempotent'],
+    ];
+    $final = finalizePracticeResponse($runtime, (string) $verified['claims']['session_id'], $payload);
+    respond($final, $entry['idempotent'] ? 200 : 201);
 }
 
 respond(['error' => 'not_found'], 404);

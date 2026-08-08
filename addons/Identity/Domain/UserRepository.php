@@ -15,5 +15,7 @@ interface UserRepository
     /** @param array<string,mixed> $user */
     public function create(array $user): void;
 
+    public function updatePasswordHash(string $userId, string $passwordHash, int $at): void;
+
     public function touchLogin(string $userId, int $at): void;
 }

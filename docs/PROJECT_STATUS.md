@@ -2,7 +2,7 @@
 
 ## Version
 
-`v0.5 — Virtual economy and compliance foundations`
+`v0.7 — Production virtual platform foundation`
 
 ## Completed
 
@@ -35,19 +35,19 @@
 - Append-only virtual ledger and sandbox prize-pool settlement added.
 - Configurable GeoFeature, age, KYC/KYB, risk and responsible-play gates added.
 - MySQL 8 migration added for virtual economy and privacy-minimized compliance profiles.
+- Durable identity, authentication sessions, game sessions, progression, tournament entries, audit events, risk cases and virtual ledger adapters wired into the public PHP runtime.
+- Redis-backed shared rate limiting, fail-closed production storage checks and security response headers added.
+- Durable replay response receipts added so verified practice and tournament requests are safely retryable after a timeout.
+- Container, Apache and compose validation added to CI.
 
 ## Current limitations
 
-- The gameplay is not yet a production game engine.
-- Tournament values are virtual/demo data only; phase 09 uses an explicit in-memory adapter.
-- No authentication, wallet, payment, KYC or withdrawal flow is active.
-- No cash mode is enabled.
-- Verified scores are not yet connected to durable player accounts or an operator dashboard.
-- The phase 08–10 services are not yet wired to durable HTTP persistence across PHP workers.
-- Wallet, ledger and policy services use in-memory adapters until authenticated database repositories are wired.
-- KYC/KYB is represented only by verified status signals; no identity verification provider is connected.
-- The PHP runtime is validated in CI; the local workspace does not currently include a PHP binary.
+- The gameplay engine is a validated virtual foundation, not yet a full-scale live-game service with matchmaking, CDN asset delivery or real-time presence.
+- Virtual wallet access remains fail-closed until a verified compliance profile exists; no real-value balance, payment, withdrawal or conversion exists.
+- Email verification, account recovery, support tooling and KYC/KYB provider integrations require external services before a broad public launch.
+- Production still requires operator-managed secrets, TLS termination, backups/PITR, monitoring, alert routing and a restore drill.
+- No cash mode is enabled and the repository intentionally contains no activation path for it.
 
 ## Next milestone
 
-Add authenticated account persistence, anti-cheat/risk case workflows and the admin command center. Keep any cash capability disabled until legal, provider, compliance and settlement validation is complete.
+Complete the runbook acceptance checklist, execute a closed virtual alpha and validate the external operational controls. Keep any cash capability disabled until legal, provider, compliance and settlement validation is complete.

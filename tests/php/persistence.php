@@ -75,6 +75,15 @@ persistenceTrue($game->find($claims['session_id']) !== null, 'PDO game sessions 
 persistenceTrue($game->consume($claims['session_id'], time()), 'PDO game sessions must be consumed once.');
 persistenceTrue(!$game->consume($claims['session_id'], time()), 'PDO game sessions must reject a second consume.');
 
+$retryClaims = $claims;
+$retryClaims['session_id'] = bin2hex(random_bytes(16));
+$retryClaims['seed']++;
+$game->create($retryClaims, hash('sha256', 'persistence-retry-token-' . $suffix), $userId);
+$finalPayload = ['verified' => true, 'verification' => ['valid' => true, 'score' => 42], 'cash_mode' => false];
+persistenceTrue($game->finalize($retryClaims['session_id'], $finalPayload, time()), 'PDO game sessions must finalize a response once.');
+persistenceTrue(!$game->finalize($retryClaims['session_id'], $finalPayload, time()), 'PDO final responses must be idempotent.');
+persistenceTrue($game->result($retryClaims['session_id']) === $finalPayload, 'PDO final responses must be recoverable.');
+
 $progression = new ProgressionService(new PdoProgressionStore($connection));
 $verification = [
     'valid' => true,

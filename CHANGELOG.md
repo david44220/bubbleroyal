@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0 — Production virtual-platform hardening
+
+- Added durable, idempotent replay response receipts for verified practice and tournament requests.
+- Added password-hash rehash-on-login persistence and migration locking for concurrent deploys.
+- Made production readiness fail closed when the shared Redis limiter is missing.
+- Redacted internal player identifiers from public tournament and leaderboard responses.
+- Hardened Apache/container defaults and added Docker/compose checks to CI.
+- Added the production runbook covering secrets, least privilege, backups, monitoring, rollback and the virtual-only boundary.
+
 ## 0.6.0 — Risk controls, operations, PWA and staged alpha foundations
 
 - Added anti-cheat signals, risk cases, admin audit logs and immutable kill switches.

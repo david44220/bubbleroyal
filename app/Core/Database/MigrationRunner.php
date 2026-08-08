@@ -37,31 +37,40 @@ final class MigrationRunner
     public function migrate(): int
     {
         $this->ensureTrackingTable();
-        $applied = $this->appliedVersions();
-        $files = glob(rtrim($this->directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . '*.sql') ?: [];
-        sort($files, SORT_STRING);
-        $count = 0;
-
-        foreach ($files as $file) {
-            $version = basename($file, '.sql');
-            if (isset($applied[$version])) {
-                continue;
-            }
-
-            $sql = file_get_contents($file);
-            if ($sql === false || trim($sql) === '') {
-                throw new RuntimeException('Migration is empty or unreadable: ' . $version);
-            }
-
-            $this->connection->exec($sql);
-            $statement = $this->connection->prepare(
-                'INSERT INTO br_schema_migrations (version, applied_at) VALUES (:version, UTC_TIMESTAMP(6))',
-            );
-            $statement->execute(['version' => $version]);
-            $count++;
+        $lock = $this->connection->query("SELECT GET_LOCK('bubble-royale:migrations', 30)")->fetchColumn();
+        if ((int) $lock !== 1) {
+            throw new RuntimeException('Unable to acquire the migration lock.');
         }
 
-        return $count;
+        try {
+            $applied = $this->appliedVersions();
+            $files = glob(rtrim($this->directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . '*.sql') ?: [];
+            sort($files, SORT_STRING);
+            $count = 0;
+
+            foreach ($files as $file) {
+                $version = basename($file, '.sql');
+                if (isset($applied[$version])) {
+                    continue;
+                }
+
+                $sql = file_get_contents($file);
+                if ($sql === false || trim($sql) === '') {
+                    throw new RuntimeException('Migration is empty or unreadable: ' . $version);
+                }
+
+                $this->connection->exec($sql);
+                $statement = $this->connection->prepare(
+                    'INSERT INTO br_schema_migrations (version, applied_at) VALUES (:version, UTC_TIMESTAMP(6))',
+                );
+                $statement->execute(['version' => $version]);
+                $count++;
+            }
+
+            return $count;
+        } finally {
+            $this->connection->query("SELECT RELEASE_LOCK('bubble-royale:migrations')");
+        }
     }
 
     private function ensureTrackingTable(): void

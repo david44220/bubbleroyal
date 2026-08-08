@@ -1,10 +1,12 @@
 .git
 .gitignore
+.github
+node_modules
+vendor
 .env
 .env.*
 !.env.example
-node_modules
-vendor
 storage
 tests
 docs
+*.log

@@ -54,8 +54,9 @@ final class IdentityService
         $at ??= time();
         $algorithm = defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_BCRYPT;
         if (password_needs_rehash((string) $user['password_hash'], $algorithm)) {
-            // A future password-service adapter may persist this transparently.
-            // The current repository contract keeps login side effects explicit.
+            $replacementHash = $this->hashPassword($password);
+            $this->users->updatePasswordHash((string) $user['id'], $replacementHash, $at);
+            $user['password_hash'] = $replacementHash;
         }
         $this->users->touchLogin((string) $user['id'], $at);
         $user['last_login_at'] = $at;

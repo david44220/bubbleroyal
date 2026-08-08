@@ -50,7 +50,33 @@ final class PdoGameSessionStore implements GameSessionStore
                 $session[$key] = strtotime($session[$key]);
             }
         }
+        if (is_string($session['final_result'] ?? null) && trim($session['final_result']) !== '') {
+            $session['final_result'] = json_decode($session['final_result'], true, 32, JSON_THROW_ON_ERROR);
+        }
         return $session;
+    }
+
+    public function finalize(string $sessionId, array $result, int $at): bool
+    {
+        $statement = $this->connection->prepare(
+            'UPDATE br_game_sessions SET final_result = :final_result, consumed_at = FROM_UNIXTIME(:consumed_at) '
+            . 'WHERE session_id = :id AND consumed_at IS NULL AND final_result IS NULL '
+            . 'AND expires_at > FROM_UNIXTIME(:expires_check)',
+        );
+        $statement->execute([
+            'id' => $sessionId,
+            'final_result' => json_encode($result, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES),
+            'consumed_at' => $at,
+            'expires_check' => $at,
+        ]);
+        return $statement->rowCount() === 1;
+    }
+
+    public function result(string $sessionId): ?array
+    {
+        $session = $this->find($sessionId);
+        $result = $session['final_result'] ?? null;
+        return is_array($result) ? $result : null;
     }
 
     public function consume(string $sessionId, int $at): bool

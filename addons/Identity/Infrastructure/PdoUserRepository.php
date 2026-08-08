@@ -58,6 +58,19 @@ final class PdoUserRepository implements UserRepository
         }
     }
 
+    public function updatePasswordHash(string $userId, string $passwordHash, int $at): void
+    {
+        $statement = $this->connection->prepare(
+            'UPDATE br_users SET password_hash = :password_hash, updated_at = FROM_UNIXTIME(:updated_at) '
+            . 'WHERE id = :id',
+        );
+        $statement->execute([
+            'id' => $userId,
+            'password_hash' => $passwordHash,
+            'updated_at' => $at,
+        ]);
+    }
+
     public function touchLogin(string $userId, int $at): void
     {
         $statement = $this->connection->prepare(

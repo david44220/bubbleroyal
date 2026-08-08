@@ -17,12 +17,37 @@ final class InMemoryGameSessionStore implements GameSessionStore
             'token_hash' => $tokenHash,
             'expires_at' => $claims['expires_at'],
             'consumed_at' => null,
+            'final_result' => null,
         ];
     }
 
     public function find(string $sessionId): ?array
     {
         return $this->sessions[$sessionId] ?? null;
+    }
+
+    public function finalize(string $sessionId, array $result, int $at): bool
+    {
+        if (!isset($this->sessions[$sessionId])) {
+            return false;
+        }
+        if ($this->sessions[$sessionId]['final_result'] !== null) {
+            return false;
+        }
+        if ($this->sessions[$sessionId]['consumed_at'] !== null
+            || (int) $this->sessions[$sessionId]['expires_at'] <= $at) {
+            return false;
+        }
+
+        $this->sessions[$sessionId]['final_result'] = $result;
+        $this->sessions[$sessionId]['consumed_at'] = $at;
+        return true;
+    }
+
+    public function result(string $sessionId): ?array
+    {
+        $result = $this->sessions[$sessionId]['final_result'] ?? null;
+        return is_array($result) ? $result : null;
     }
 
     public function consume(string $sessionId, int $at): bool

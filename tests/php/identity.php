@@ -28,7 +28,14 @@ identityTrue($identity->authenticate('player@example.com', 'wrong password') ===
 $authenticated = $identity->authenticate('PLAYER@EXAMPLE.COM', 'correct horse battery staple', 1700000001);
 identityTrue(is_array($authenticated), 'Valid credentials must authenticate.');
 
-$created = $auth->create($user['id'], '127.0.0.1', 'test-agent', 1700000002);
+$weakHash = password_hash('correct horse battery staple', PASSWORD_BCRYPT, ['cost' => 4]);
+$users->updatePasswordHash($user['id'], $weakHash, 1700000001);
+$identity->authenticate('player@example.com', 'correct horse battery staple', 1700000002);
+$rehash = $users->findById($user['id']);
+$algorithm = defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_BCRYPT;
+identityTrue(is_array($rehash) && !password_needs_rehash((string) $rehash['password_hash'], $algorithm), 'Successful login must upgrade weak password hashes.');
+
+$created = $auth->create($user['id'], '127.0.0.1', 'test-agent', 1700000003);
 $current = $auth->authenticate($created['token'], 1700000003);
 identityTrue(is_array($current) && $current['user']['id'] === $user['id'], 'Session tokens must resolve to their user.');
 $auth->assertCsrf($current['session'], $created['csrf_token']);
@@ -49,6 +56,13 @@ $stored = $gameSessions->find($issued['claims']['session_id']);
 identityTrue(is_array($stored) && $stored['player_id'] === $user['id'], 'Game sessions must retain player binding.');
 identityTrue($gameSessions->consume($issued['claims']['session_id'], 1700000011), 'A game session must be consumable once.');
 identityTrue(!$gameSessions->consume($issued['claims']['session_id'], 1700000012), 'A consumed game session must reject reuse.');
+
+$retryIssued = $sessionService->issue(424243, 1700000020, $user['id']);
+$gameSessions->create($retryIssued['claims'], hash('sha256', $retryIssued['token']), $user['id']);
+$finalPayload = ['verified' => true, 'verification' => ['valid' => true, 'score' => 42], 'cash_mode' => false];
+identityTrue($gameSessions->finalize($retryIssued['claims']['session_id'], $finalPayload, 1700000021), 'A practice response must be finalized once.');
+identityTrue(!$gameSessions->finalize($retryIssued['claims']['session_id'], $finalPayload, 1700000022), 'A finalized practice response must be idempotent.');
+identityTrue($gameSessions->result($retryIssued['claims']['session_id']) === $finalPayload, 'A finalized practice response must be recoverable.');
 
 $auth->revoke($current['session'], 1700000013);
 identityTrue($auth->authenticate($created['token'], 1700000014) === null, 'Revoked sessions must no longer authenticate.');

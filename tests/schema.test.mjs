@@ -51,3 +51,9 @@ test('runtime migration persists progression, tournaments and immutable periods'
   assert.match(runtime, /chk_br_virtual_entry_cost CHECK \(ticket_cost = 0\)/);
   assert.doesNotMatch(runtime, /FLOAT|DOUBLE/i);
 });
+
+test('game sessions retain a server-generated final response for safe retries', () => {
+  const results = read('database/migrations/0025_game_session_results.sql');
+  assert.match(results, /br_game_sessions/);
+  assert.match(results, /final_result JSON/);
+});

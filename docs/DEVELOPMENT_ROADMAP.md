@@ -96,10 +96,10 @@ Recommended runtime stack: PHP 8.5, MySQL 8, Redis, S3/CDN, PWA service worker a
 5. Local Bubble Shooter game engine and practice screen (initial client implemented).
 6. Deterministic board seeds, replay format and score model (implemented with `br-replay-v1`).
 7. Signed game sessions and server-side score verification (implemented for virtual practice only).
-8. Practice challenges, XP, tickets and achievements (virtual domain implemented; durable account storage pending).
-9. Tournament definitions, lobbies, entries and schedules (free virtual domain implemented; durable persistence pending).
-10. Leaderboards, tie-breaking, result publication and replay review (virtual domain implemented; operator workflow pending).
-11. Virtual rewards and virtual wallet (implemented with ledger-backed virtual units; durable adapter prepared).
+8. Practice challenges, XP, tickets and achievements (virtual domain and durable progression persistence implemented).
+9. Tournament definitions, lobbies, entries and schedules (free virtual domain and durable persistence implemented).
+10. Leaderboards, tie-breaking, result publication and replay review (virtual domain implemented; public APIs redact internal player identifiers).
+11. Virtual rewards and virtual wallet (implemented with ledger-backed virtual units and a persistent ledger adapter; policy access remains fail-closed).
 12. Append-only ledger and sandbox prize-pool settlement (implemented for virtual units only).
 13. GeoFeature, age, KYC/KYB and responsible-play rule engine (implemented as a configurable fail-closed foundation).
 14. Anti-cheat, anti-fraud, risk cases and manual review tools (implemented as virtual review foundation).
@@ -115,6 +115,6 @@ Recommended runtime stack: PHP 8.5, MySQL 8, Redis, S3/CDN, PWA service worker a
 
 Every phase must include its migration changes, automated tests, security checklist, UX/design verification, documentation, changelog, rollback notes and a short phase report. No phase is considered complete if it contains placeholder business logic, an unverified money flow or a hidden design deviation.
 
-## Phases 14–21 checkpoint
+## Production virtual-platform checkpoint
 
-Phases 08–21 are now implemented as framework-free, virtual-only or sandbox-gated domain services with explicit in-memory adapters, MySQL migrations, JavaScript/PHP tests and rollback notes. They are a validated foundation for the next authenticated/persistent integration; they do not claim production durability, cash eligibility or legal/provider readiness. The cash-readiness gate is a checklist, not an activation path.
+Phases 08–21 are implemented as framework-free, virtual-only or sandbox-gated domain services with MySQL persistence, Redis rate limiting, JavaScript/PHP tests, durable retry receipts and deployment checks. The virtual runtime is production-shaped, but public launch still depends on the runbook’s infrastructure, monitoring, support and external-service gates. The cash-readiness gate is a checklist, not an activation path.

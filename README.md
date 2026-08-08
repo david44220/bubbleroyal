@@ -4,7 +4,7 @@ Bubble Royale is a premium skill-based Bubble Shooter tournament platform with a
 
 ## Current status
 
-The repository currently contains the validated homepage, a playable virtual practice arena, deterministic replay tooling, server validation, virtual competition foundations, operational controls, a PWA shell and a staging-only virtual alpha blueprint under [`prototype/`](prototype/), [`addons/`](addons/), [`deploy/`](deploy/) and [`public/`](public/).
+The repository currently contains the validated homepage, a playable virtual practice arena, deterministic replay tooling, server validation, persistent virtual competition foundations, operational controls, a PWA shell and a production-shaped virtual deployment under [`prototype/`](prototype/), [`addons/`](addons/), [`deploy/`](deploy/) and [`public/`](public/).
 
 The homepage is available in two forms:
 
@@ -38,3 +38,5 @@ The homepage is available in two forms:
 ## Roadmap
 
 The full staged roadmap is documented in [`docs/DEVELOPMENT_ROADMAP.md`](docs/DEVELOPMENT_ROADMAP.md). Phases 14–21 now add risk review, operations, PWA, staging alpha and a cash-readiness gate without enabling real-money play. The remaining work is external validation and a separately approved production integration.
+
+The release and operations checklist is documented in [`docs/PRODUCTION_RUNBOOK.md`](docs/PRODUCTION_RUNBOOK.md). It covers secrets, MySQL/Redis readiness, migrations, backups, observability, rollback and the explicit virtual-only launch boundary.
