@@ -11,36 +11,27 @@ final class VirtualTournamentService
     /** @var \Closure():int */
     private readonly \Closure $clock;
 
-    /** @var array<string, array<string, mixed>> */
-    private array $tournaments = [];
-
-    /** @var array<string, list<array<string, mixed>>> */
-    private array $entries = [];
-
-    public function __construct(?\Closure $clock = null)
-    {
+    public function __construct(
+        ?\Closure $clock = null,
+        ?VirtualTournamentStore $store = null,
+    ) {
         $this->clock = $clock ?? static fn (): int => time();
         $now = ($this->clock)();
         $periodStart = intdiv($now, 86400) * 86400;
-
-        foreach (VirtualTournamentCatalog::templates() as $template) {
-            $tournamentId = (string) $template['id'];
-            $this->tournaments[$tournamentId] = $template + [
-                'starts_at_unix' => $periodStart,
-                'ends_at_unix' => $periodStart + (int) $template['duration_seconds'],
-            ];
-            $this->entries[$tournamentId] = [];
-        }
+        $this->store = $store ?? new InMemoryVirtualTournamentStore();
+        $this->store->syncCatalog(VirtualTournamentCatalog::templates(), $periodStart);
     }
+
+    private readonly VirtualTournamentStore $store;
 
     /** @return list<array<string, mixed>> */
     public function list(?int $at = null): array
     {
         $at ??= ($this->clock)();
-        $tournaments = [];
-        foreach ($this->tournaments as $tournament) {
-            $tournaments[] = $this->publicTournament($tournament, $at);
-        }
+        $tournaments = array_map(
+            fn (array $tournament): array => $this->publicTournament($tournament, $at),
+            $this->store->list($at),
+        );
 
         usort($tournaments, static fn (array $left, array $right): int => strcmp(
             (string) $left['id'],
@@ -64,7 +55,7 @@ final class VirtualTournamentService
     {
         $tournament = $this->tournament($tournamentId);
         $at ??= ($this->clock)();
-        $entries = $this->entries[$tournamentId] ?? [];
+        $entries = $this->store->entries($tournamentId);
 
         return [
             'tournament' => $this->publicTournament($tournament, $at),
@@ -106,18 +97,13 @@ final class VirtualTournamentService
             throw new InvalidArgumentException('A verified session ID is required.');
         }
 
-        foreach ($this->entries[$tournamentId] as $existing) {
-            if ($existing['player_id'] === $playerId) {
-                return [
-                    'idempotent' => true,
-                    'entry' => $existing,
-                    'lobby' => $this->lobby($tournamentId, $enteredAt),
-                ];
-            }
-        }
-
-        if (count($this->entries[$tournamentId]) >= (int) $tournament['capacity']) {
-            throw new InvalidArgumentException('Tournament lobby is full.');
+        $existing = $this->store->findPlayerEntry($tournamentId, $playerId);
+        if ($existing !== null) {
+            return [
+                'idempotent' => true,
+                'entry' => $existing,
+                'lobby' => $this->lobby($tournamentId, $enteredAt),
+            ];
         }
 
         $entry = [
@@ -138,11 +124,11 @@ final class VirtualTournamentService
             'replay_review' => 'pending',
             'verified_at' => $enteredAt,
         ];
-        $this->entries[$tournamentId][] = $entry;
+        $stored = $this->store->createEntry($entry, (int) $tournament['capacity']);
 
         return [
-            'idempotent' => false,
-            'entry' => $entry,
+            'idempotent' => !$stored['created'],
+            'entry' => $stored['entry'],
             'lobby' => $this->lobby($tournamentId, $enteredAt),
         ];
     }
@@ -151,11 +137,12 @@ final class VirtualTournamentService
     private function tournament(string $tournamentId): array
     {
         $tournamentId = trim($tournamentId);
-        if (!array_key_exists($tournamentId, $this->tournaments)) {
+        $tournament = $this->store->find($tournamentId);
+        if ($tournament === null) {
             throw new InvalidArgumentException('Unknown virtual tournament.');
         }
 
-        return $this->tournaments[$tournamentId];
+        return $tournament;
     }
 
     /** @param array<string, mixed> $tournament @return array<string, mixed> */

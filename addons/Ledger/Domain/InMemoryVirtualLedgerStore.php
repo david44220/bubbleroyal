@@ -6,7 +6,7 @@ namespace Addons\Ledger\Domain;
 
 use LogicException;
 
-final class InMemoryVirtualLedgerStore implements VirtualLedgerStore
+final class InMemoryVirtualLedgerStore implements TransactionalVirtualLedgerStore
 {
     /** @var list<array<string, mixed>> */
     private array $entries = [];
@@ -42,5 +42,35 @@ final class InMemoryVirtualLedgerStore implements VirtualLedgerStore
             $this->entries,
             static fn (array $entry): bool => ($entry['event_id'] ?? null) === $eventId,
         ));
+    }
+
+    public function appendIssue(array $entry): array
+    {
+        $existing = $this->findByEventId((string) $entry['event_id']);
+        if ($existing !== []) {
+            return ['created' => false, 'entries' => $existing];
+        }
+        $this->appendMany([$entry]);
+        return ['created' => true, 'entries' => [$entry]];
+    }
+
+    public function appendTransfer(array $entries, string $fromAccount, string $unitType, int $units): array
+    {
+        $eventId = (string) ($entries[0]['event_id'] ?? '');
+        $existing = $this->findByEventId($eventId);
+        if ($existing !== []) {
+            return ['created' => false, 'entries' => $existing];
+        }
+        $balance = 0;
+        foreach ($this->entries as $entry) {
+            if ($entry['account_key'] === $fromAccount && $entry['unit_type'] === $unitType) {
+                $balance += $entry['direction'] === 'credit' ? (int) $entry['units'] : -(int) $entry['units'];
+            }
+        }
+        if ($balance < $units) {
+            throw new \InvalidArgumentException('Insufficient virtual units for transfer.');
+        }
+        $this->appendMany($entries);
+        return ['created' => true, 'entries' => $entries];
     }
 }

@@ -28,6 +28,21 @@ jobs:
   php:
     name: PHP 8.5 server checks
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: bubble_royale_ci
+          MYSQL_USER: bubble_royale
+          MYSQL_PASSWORD: bubble_royale_ci_password
+          MYSQL_ROOT_PASSWORD: root_ci_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -proot_ci_password"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,10 +51,17 @@ jobs:
         with:
           php-version: '8.5'
           coverage: none
+          extensions: pdo_mysql
       - name: Lint PHP sources
         shell: bash
-        run: find app addons public tests -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+        run: find app addons public tests tools -type f -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Run PHP protocol tests
         env:
           BUBBLE_ROYALE_SESSION_SECRET: ci-only-secret-change-me-0123456789
-        run: php tests/php/run.php && php tests/php/phase-08-10.php && php tests/php/phase-11-13.php && php tests/php/phase-14.php && php tests/php/phase-15.php && php tests/php/phase-16.php && php tests/php/phase-17.php && php tests/php/phase-20.php && php tests/php/phase-21.php
+          APP_ENV: ci
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: bubble_royale_ci
+          DB_USERNAME: bubble_royale
+          DB_PASSWORD: bubble_royale_ci_password
+        run: php tools/migrate.php && php tests/php/run.php && php tests/php/identity.php && php tests/php/persistence.php && php tests/php/phase-08-10.php && php tests/php/phase-11-13.php && php tests/php/phase-14.php && php tests/php/phase-15.php && php tests/php/phase-16.php && php tests/php/phase-17.php && php tests/php/phase-20.php && php tests/php/phase-21.php

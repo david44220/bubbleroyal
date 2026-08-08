@@ -21,5 +21,5 @@
     "readTournamentLobby",
     "enterVirtualTournament"
   ],
-  "persistence_boundary": "VirtualTournamentService is an in-memory adapter for the phase; MySQL/Redis storage is a later migration."
+  "persistence_boundary": "VirtualTournamentService uses an in-memory adapter locally and a MySQL adapter for staging/production; recurring periods receive immutable IDs."
 }

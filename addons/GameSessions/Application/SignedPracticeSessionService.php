@@ -20,7 +20,7 @@ final class SignedPracticeSessionService
     }
 
     /** @return array{token:string,claims:array<string,mixed>} */
-    public function issue(?int $seed = null, ?int $issuedAt = null): array
+    public function issue(?int $seed = null, ?int $issuedAt = null, ?string $playerId = null): array
     {
         $issuedAt ??= time();
         $seed ??= random_int(1, 2147483647);
@@ -37,6 +37,13 @@ final class SignedPracticeSessionService
             'issued_at' => $issuedAt,
             'expires_at' => $issuedAt + $this->ttlSeconds,
         ];
+        if ($playerId !== null) {
+            $playerId = trim($playerId);
+            if ($playerId === '' || strlen($playerId) > 128) {
+                throw new InvalidArgumentException('Practice session player ID is invalid.');
+            }
+            $claims['player_id'] = $playerId;
+        }
 
         return [
             'token' => HmacSigner::issue($claims, $this->secret),
@@ -45,7 +52,7 @@ final class SignedPracticeSessionService
     }
 
     /** @return array<string, mixed> */
-    public function verify(string $token, ?int $now = null): array
+    public function verify(string $token, ?int $now = null, ?string $expectedPlayerId = null): array
     {
         $claims = HmacSigner::verify($token, $this->secret);
         $now ??= time();
@@ -77,6 +84,12 @@ final class SignedPracticeSessionService
         }
         if ($claims['rows'] !== BubblePracticeEngine::DEFAULT_ROWS || $claims['cols'] !== BubblePracticeEngine::DEFAULT_COLS) {
             throw new InvalidArgumentException('Unsupported practice board dimensions.');
+        }
+        if (array_key_exists('player_id', $claims) && !is_string($claims['player_id'])) {
+            throw new InvalidArgumentException('Invalid signed session player binding.');
+        }
+        if ($expectedPlayerId !== null && (($claims['player_id'] ?? null) !== $expectedPlayerId)) {
+            throw new InvalidArgumentException('Signed practice session belongs to another player.');
         }
 
         return $claims;

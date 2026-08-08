@@ -32,7 +32,7 @@ final class AdminCommandCenter
             throw new InvalidArgumentException('A kill-switch change requires a reason.');
         }
         $before = $this->killSwitches->all();
-        $after = $this->killSwitches->set($flag, $enabled);
+        $after = $this->killSwitches->set($flag, $enabled, $reason, $actorId, $createdAt);
         $audit = $this->audit->record($actorId, 'kill_switch.update', $flag, [
             'reason' => $reason,
             'enabled' => $enabled,

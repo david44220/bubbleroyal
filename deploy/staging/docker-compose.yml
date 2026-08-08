@@ -10,6 +10,18 @@ services:
     environment:
       APP_ENV: staging
       BUBBLE_ROYALE_SESSION_SECRET: ${BUBBLE_ROYALE_SESSION_SECRET:?copy .env.example to .env and set a local value}
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${MYSQL_DATABASE:-bubble_royale_staging}
+      DB_USERNAME: ${MYSQL_USER:-bubble_royale}
+      DB_PASSWORD: ${MYSQL_PASSWORD:?set a local staging password}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      RATE_LIMIT_PATH: /var/www/html/storage/cache/rate-limits
+      COOKIE_SECURE: ${COOKIE_SECURE:-0}
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-1}
+      MIGRATION_RETRIES: ${MIGRATION_RETRIES:-30}
     depends_on:
       db:
         condition: service_healthy
@@ -33,7 +45,14 @@ services:
 
   redis:
     image: redis:7-alpine
-    command: ["redis-server", "--appendonly", "yes"]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+    healthcheck:
+      test: ["CMD-SHELL", "if [ -n \"$$REDIS_PASSWORD\" ]; then redis-cli -a \"$$REDIS_PASSWORD\" ping; else redis-cli ping; fi"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    command: ["sh", "-c", "if [ -n \"$$REDIS_PASSWORD\" ]; then exec redis-server --appendonly yes --requirepass \"$$REDIS_PASSWORD\"; else exec redis-server --appendonly yes; fi"]
     volumes:
       - bubble-royale-staging-redis:/data
 

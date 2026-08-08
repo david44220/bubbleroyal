@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Addons\Rewards\Domain;
 
+use App\Core\Support\CanonicalJson;
 use InvalidArgumentException;
+use LogicException;
 
 final class ProgressionService
 {
@@ -46,6 +48,23 @@ final class ProgressionService
         }
 
         $occurredAt ??= time();
+        if ($this->store instanceof TransactionalProgressionStore) {
+            return $this->store->transaction(
+                $playerId,
+                fn (): array => $this->applyVerifiedResultInternal($playerId, $verification, $eventId, $occurredAt),
+            );
+        }
+
+        return $this->applyVerifiedResultInternal($playerId, $verification, $eventId, $occurredAt);
+    }
+
+    /** @return array<string, mixed> */
+    private function applyVerifiedResultInternal(
+        string $playerId,
+        array $verification,
+        string $eventId,
+        int $occurredAt,
+    ): array {
         $state = $this->normaliseState($this->store->load($playerId), $playerId);
         if (array_key_exists($eventId, $state['processed_events'])) {
             return [
@@ -60,6 +79,17 @@ final class ProgressionService
                 ],
                 'progression' => $this->publicState($state),
             ];
+        }
+
+        if ($this->store instanceof TransactionalProgressionStore) {
+            $payloadHash = hash('sha256', CanonicalJson::encode([
+                'player_id' => $playerId,
+                'event_id' => $eventId,
+                'verification' => $verification,
+            ]));
+            if (!$this->store->claimEvent($eventId, $playerId, $payloadHash)) {
+                throw new LogicException('Progression event receipt exists without a matching progression state.');
+            }
         }
 
         $xpDelta = 0;

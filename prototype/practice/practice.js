@@ -41,6 +41,9 @@
   let animationFrame = 0;
   let initialBubbleCount = 1;
   let replay = null;
+  let serverSessionToken = null;
+  let serverSessionId = null;
+  let serverSessionPending = false;
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
@@ -390,16 +393,49 @@
     if (state.score > readBestScore()) saveBestScore(state.score);
   }
 
-  function startNewRun() {
+  function csrfToken() {
+    return document.cookie.split(';').map((item) => item.trim()).find((item) => item.startsWith('br_csrf='))?.slice(8) || '';
+  }
+
+  async function requestServerSession() {
+    if (window.location.protocol === 'file:') return null;
+    const headers = { Accept: 'application/json' };
+    const csrf = csrfToken();
+    if (csrf) headers['X-CSRF-Token'] = csrf;
+    try {
+      const response = await fetch('/api/v1/practice/sessions', { method: 'POST', credentials: 'same-origin', headers });
+      if (!response.ok) return null;
+      const payload = await response.json();
+      if (!payload.session_token || !payload.session) return null;
+      return payload;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function startRun(serverSession = null) {
     runIndex += 1;
-    state = Engine.createGame({ seed: Engine.DEFAULT_SEED + runIndex * 7919 });
+    const seed = serverSession?.session?.seed || (Engine.DEFAULT_SEED + runIndex * 7919);
+    serverSessionToken = serverSession?.session_token || null;
+    serverSessionId = serverSession?.session?.session_id || null;
+    state = Engine.createGame({ seed });
     initialBubbleCount = Engine.boardCount(state.board);
     replay = Replay.createReplay(state);
     movingShot = null;
     aimAngle = 0;
     sessionSeed.textContent = `BR-${state.seed}`;
     updatePanel();
-    showToast('New deterministic practice run ready.');
+    showToast(serverSessionToken ? 'Verified server practice session ready.' : 'Local practice run ready.');
+  }
+
+  async function startNewRun() {
+    if (serverSessionPending) return;
+    serverSessionPending = true;
+    newRunButton.disabled = true;
+    const serverSession = await requestServerSession();
+    startRun(serverSession);
+    newRunButton.disabled = false;
+    serverSessionPending = false;
   }
 
   function finishShot() {
@@ -420,8 +456,35 @@
     }
   }
 
-  function exportReplay() {
+  async function verifyOnServer(document) {
+    if (!serverSessionToken) return null;
+    const headers = { 'Content-Type': 'application/json', Accept: 'application/json' };
+    const csrf = csrfToken();
+    if (csrf) headers['X-CSRF-Token'] = csrf;
+    const response = await fetch('/api/v1/practice/sessions/verify', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers,
+      body: JSON.stringify({ session_token: serverSessionToken, replay: document }),
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.error || 'Server verification failed.');
+    return payload;
+  }
+
+  async function exportReplay() {
     const document = Replay.finalize(replay, state);
+    if (serverSessionToken) {
+      exportReplayButton.disabled = true;
+      try {
+        const verified = await verifyOnServer(document);
+        showToast(`Server verified · ${formatNumber(verified.verification.score)} virtual points.`);
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : 'Server verification failed.');
+      } finally {
+        exportReplayButton.disabled = false;
+      }
+    }
     const blob = new Blob([Replay.serialize(document)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = window.document.createElement('a');
@@ -429,7 +492,7 @@
     link.download = `bubble-royale-${state.seed}-replay.json`;
     link.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    showToast('Replay exported. It can be verified by the future server session API.');
+    if (!serverSessionToken) showToast('Local replay exported. Connect to the platform to verify it server-side.');
   }
 
   function animateShot(timestamp) {
@@ -507,4 +570,7 @@
   resizeCanvas();
   updatePanel();
   render();
+  requestServerSession().then((serverSession) => {
+    if (serverSession) startRun(serverSession);
+  });
 })();

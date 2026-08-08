@@ -8,31 +8,26 @@ use InvalidArgumentException;
 
 final class KillSwitchService
 {
-    /** @var array<string,bool> */
-    private array $flags = [
-        'virtual_gameplay' => true,
-        'virtual_progression' => true,
-        'virtual_tournaments' => true,
-        'virtual_wallet' => true,
-        'sandbox_payments' => true,
-        'cash_mode' => false,
-    ];
+    public function __construct(
+        private readonly KillSwitchStore $store = new InMemoryKillSwitchStore(),
+    ) {
+    }
 
     public function isEnabled(string $flag): bool
     {
         if (!array_key_exists($flag, $this->flags)) {
             throw new InvalidArgumentException('Unknown kill switch.');
         }
-        return $this->flags[$flag];
+        return $this->all()[$flag];
     }
 
     /** @return array<string,bool> */
     public function all(): array
     {
-        return $this->flags;
+        return $this->store->all();
     }
 
-    public function set(string $flag, bool $enabled): array
+    public function set(string $flag, bool $enabled, ?string $reason = null, ?string $updatedBy = null, ?int $at = null): array
     {
         if (!array_key_exists($flag, $this->flags)) {
             throw new InvalidArgumentException('Unknown kill switch.');
@@ -40,7 +35,7 @@ final class KillSwitchService
         if ($flag === 'cash_mode' && $enabled) {
             throw new InvalidArgumentException('Cash mode cannot be enabled by the phase 15 command center.');
         }
-        $this->flags[$flag] = $enabled;
+        $this->store->set($flag, $enabled, $reason, $updatedBy, $at);
         return $this->all();
     }
 }

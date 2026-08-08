@@ -6,9 +6,10 @@
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "audit": "node tools/audit.mjs",
-    "check": "npm run check:homepage && npm run check:practice && npm run check:pwa",
+    "check": "npm run check:homepage && npm run check:practice && npm run check:pwa && npm run check:auth",
     "check:homepage": "node --check prototype/homepage/app.js",
     "check:practice": "node --check prototype/practice/engine.js && node --check prototype/practice/replay.js && node --check prototype/practice/practice.js",
-    "check:pwa": "node --check prototype/homepage/sw.js && node --check prototype/practice/sw.js && node --check prototype/practice/pwa.js"
+    "check:pwa": "node --check prototype/homepage/sw.js && node --check prototype/practice/sw.js && node --check prototype/practice/pwa.js",
+    "check:auth": "node --check prototype/auth/auth.js"
   }
 }

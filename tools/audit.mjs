@@ -51,7 +51,7 @@ for (const path of files) {
     addFinding('integer-money', path, 'FLOAT/DOUBLE is used in a migration');
   }
 
-  if (path.endsWith('.php') && /\b(?:eval|shell_exec|exec|system|passthru|proc_open|popen|unserialize)\s*\(/.test(text)) {
+  if (path.endsWith('.php') && /(?<!->)(?<!::)\b(?:eval|assert|shell_exec|exec|system|passthru|proc_open|popen|unserialize)\s*\(/.test(text)) {
     addFinding('unsafe-runtime', path, 'dynamic execution or unsafe deserialization call found');
   }
 }

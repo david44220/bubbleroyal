@@ -105,7 +105,15 @@ final class VirtualLedgerService
             $eventId,
             $createdAt,
         );
-        $this->store->appendMany([$entry]);
+        if ($this->store instanceof TransactionalVirtualLedgerStore) {
+            $stored = $this->store->appendIssue($entry);
+            if (!$stored['created']) {
+                $this->assertSameIssue($stored['entries'], $accountKey, $unitType, $units, $referenceType, $referenceId);
+                return ['idempotent' => true, 'entries' => $stored['entries']];
+            }
+        } else {
+            $this->store->appendMany([$entry]);
+        }
 
         return ['idempotent' => false, 'entries' => [$entry]];
     }
@@ -182,7 +190,14 @@ final class VirtualLedgerService
             $createdAt,
             'credit',
         );
-        $this->store->appendMany([$debit, $credit]);
+        if ($this->store instanceof TransactionalVirtualLedgerStore) {
+            $stored = $this->store->appendTransfer([$debit, $credit], $fromAccount, $unitType, $units);
+            if (!$stored['created']) {
+                return ['idempotent' => true, 'entries' => $stored['entries']];
+            }
+        } else {
+            $this->store->appendMany([$debit, $credit]);
+        }
 
         return ['idempotent' => false, 'entries' => [$debit, $credit]];
     }
