@@ -61,9 +61,9 @@ final class PdoUserRepository implements UserRepository
     public function touchLogin(string $userId, int $at): void
     {
         $statement = $this->connection->prepare(
-            'UPDATE br_users SET last_login_at = FROM_UNIXTIME(:at), updated_at = FROM_UNIXTIME(:at) WHERE id = :id',
+            'UPDATE br_users SET last_login_at = FROM_UNIXTIME(:login_at), updated_at = FROM_UNIXTIME(:updated_at) WHERE id = :id',
         );
-        $statement->execute(['id' => $userId, 'at' => $at]);
+        $statement->execute(['id' => $userId, 'login_at' => $at, 'updated_at' => $at]);
     }
 
     /** @return array<string,mixed> */

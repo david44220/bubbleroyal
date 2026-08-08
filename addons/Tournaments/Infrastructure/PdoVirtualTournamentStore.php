@@ -61,10 +61,10 @@ final class PdoVirtualTournamentStore implements VirtualTournamentStore
             'SELECT tournament_id, name, description, duration_seconds, capacity, UNIX_TIMESTAMP(starts_at) '
             . 'AS starts_at_unix, UNIX_TIMESTAMP(ends_at) AS ends_at_unix, entry_type, ticket_cost, mode, value_type, '
             . 'cash_mode, rules_version FROM br_virtual_tournaments '
-            . 'WHERE starts_at <= FROM_UNIXTIME(:at + 604800) AND ends_at >= FROM_UNIXTIME(:at - 604800) '
+            . 'WHERE starts_at <= FROM_UNIXTIME(:at_after) AND ends_at >= FROM_UNIXTIME(:at_before) '
             . 'ORDER BY tournament_id ASC',
         );
-        $statement->execute(['at' => $at]);
+        $statement->execute(['at_after' => $at + 604800, 'at_before' => $at - 604800]);
         return $this->normaliseTournaments($statement->fetchAll());
     }
 

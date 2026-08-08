@@ -56,10 +56,10 @@ final class PdoGameSessionStore implements GameSessionStore
     public function consume(string $sessionId, int $at): bool
     {
         $statement = $this->connection->prepare(
-            'UPDATE br_game_sessions SET consumed_at = FROM_UNIXTIME(:at) '
-            . 'WHERE session_id = :id AND consumed_at IS NULL AND expires_at > FROM_UNIXTIME(:at)',
+            'UPDATE br_game_sessions SET consumed_at = FROM_UNIXTIME(:consumed_at) '
+            . 'WHERE session_id = :id AND consumed_at IS NULL AND expires_at > FROM_UNIXTIME(:expires_check)',
         );
-        $statement->execute(['id' => $sessionId, 'at' => $at]);
+        $statement->execute(['id' => $sessionId, 'consumed_at' => $at, 'expires_check' => $at]);
         return $statement->rowCount() === 1;
     }
 }
