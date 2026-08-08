@@ -21,7 +21,7 @@ final class PdoProgressionStore implements TransactionalProgressionStore
     {
         $statement = $this->connection->prepare(
             'SELECT state_json FROM br_virtual_progression_states WHERE player_id = :player_id '
-            . ($this->transactionActive ? 'FOR UPDATE' : '') . ' LIMIT 1',
+            . 'LIMIT 1 ' . ($this->transactionActive ? 'FOR UPDATE' : ''),
         );
         $statement->execute(['player_id' => $playerId]);
         $json = $statement->fetchColumn();
